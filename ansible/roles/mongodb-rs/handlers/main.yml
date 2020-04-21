@@ -1,0 +1,7 @@
+---
+# handlers file for mongodb-replicaset
+- name: restart_mongodb
+  systemd:
+    name: mongod
+    enabled: yes
+    state: restarted

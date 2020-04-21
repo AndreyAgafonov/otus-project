@@ -1,0 +1,9 @@
+---
+# handlers file for Mongo-router
+
+- name: restart_mongos
+  systemd:
+    name: mongos
+    enabled: yes
+    daemon_reload: yes
+    state: restarted

@@ -1,0 +1,8 @@
+---
+- name: test
+  debug:
+    msg:
+      - "{{ hostvars[inventory_hostname].group_names[1] }}"
+      #- "{{ hostvars[ groups['mongodb_shard1'][0]]['mongodb_replicaset_name'] }}"
+
+    #.{{ domain }}:{{ mongodb_port }}"

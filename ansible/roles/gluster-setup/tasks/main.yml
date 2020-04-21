@@ -1,0 +1,83 @@
+---
+- name: prepare disk
+  include: part.yml
+
+- name: add gluster repo
+  yum:
+    name: centos-release-gluster
+    state: present
+
+- name: Update ssh config
+  blockinfile:
+    path: /home/vagrant/.ssh/config
+    owner: vagrant
+    mode: 0600
+    block: |
+        Host *
+          StrictHostKeyChecking no
+    state: present
+    create: true
+
+- name: Create cluster nodes file
+  lineinfile:
+    dest:  /home/vagrant/nodes
+    regexp: '.*{{ hostvars[item].ansible_facts.hostname }}$'
+    line: "{{ hostvars[item].ansible_facts.hostname }}"
+    state: present
+    create: true
+  loop: "{{ ansible_play_batch }}"
+
+- name: install GlusterFS
+  yum:
+    name:
+      - glusterfs-server
+      - glusterfs-client
+    state: present
+  notify: start_glusterd
+
+
+- name: Ensure Gluster brick and mount directories exist.
+  file: "path={{ item }} state=directory mode=0775"
+  with_items:
+    - "{{ gluster_brick_dir }}"
+    - "{{ gluster_mount_dir }}"
+
+- name: start_glusterd
+  systemd:
+    name: glusterd
+    state: started
+    enabled: yes
+
+- name: create gluster cluster
+  gluster_volume:
+        state: "present"
+        name: "{{ gluster_brick_name }}"
+        bricks: "{{ gluster_brick_vol }}"
+        cluster: "{{ groups.gluster | join(',') }}"
+        replicas: "{{ gluster_cluster_hosts|length }}"
+        options:
+          { performance.cache-size: '256MB',
+          performance.cache-max-file-size: '2MB',
+          performance.md-cache-timeout: '600',
+          performance.cache-invalidation: 'on',
+          network.ping-timeout: '5',
+          features.cache-invalidation-timeout: '600',
+          performance.stat-prefetch: 'on',
+          features.cache-invalidation: 'on' }
+        force: true
+  run_once: true
+  when: (inventory_hostname in gluster_cluster_hosts[0])
+
+- name: set up firewall
+  firewalld:
+    service: glusterfs
+    permanent: true
+    state: enabled
+
+- name: Ensure Gluster volume is mounted.
+  mount:
+    name: "{{ gluster_mount_dir }}"
+    src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
+    fstype: glusterfs
+    opts: "defaults,_netdev"
+    state: mounted

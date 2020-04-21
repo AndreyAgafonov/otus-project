@@ -1,0 +1,174 @@
+---
+# tasks file for mongodb-replicaset
+- name: MONGODB-REPLICASET | Install python dependence
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - gcc
+    - python-devel
+
+- name: MONGODB-REPLICASET |crete SSL Key for replicaset
+  copy:
+    src: files/mongodb-ssl
+      #{{ mongodb_replicaset_name }}
+    dest: /etc/ssl/mongodb-keyfile
+    owner: "{{ mongodb_user }}"
+    group: "{{ mongodb_user }}"
+    mode: '0400'
+
+- name: MONGODB-REPLICASET | Install pip PyMongo
+  command: pip install pymongo
+
+- name: MONGODB-REPLICASET | Enable SSL Connection in config mongodb
+  replace:
+      path: /etc/mongod.conf
+      regexp: "{{ item.regexp }}"
+      replace: "{{ item.replace }}"
+      owner: root
+      group: root
+      mode: '0644'
+      backup: yes
+  with_items:
+    - { regexp: '^#security:', replace: 'security:' }
+    - { regexp: '^#  keyFile: /etc/ssl/mongodb-keyfile', replace: '  keyFile: /etc/ssl/mongodb-keyfile' }
+  notify:
+    - restart_mongodb
+
+# - name: MONGODB-REPLICASET | Configuring for sharding
+#   replace:
+#     path: /etc/mongod.conf
+#     regexp: "{{ item.regexp }}"
+#     replace: "{{ item.replace }}"
+#   with_items:
+#     - { regexp: '#sharding:', replace: 'sharding:' }
+#     - { regexp: '#  clusterRole: configsvr', replace: '  clusterRole: {{ mongodb_clusterRole }}' }
+#   when: (inventory_hostname in mongodb_router)
+
+- name: MONGODB-REPLICASET | restart_mongodb
+  systemd:
+    name: mongod
+    enabled: yes
+    state: restarted
+
+    #name: pymongo
+    #state: present
+
+#- name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+#  mongodb_replicaset:
+#    login_host: localhost
+#    login_user: "{{ mongodb_database_user }}"
+#    login_password: "{{ mongodb_database_password }}"
+#    replica_set: "{{ mongodb_replicaset_name }}"
+#    members:
+#    - "groups.mongodb_config.index[0]:{{ mongodb_port }}"
+#    - "groups.mongodb_config.index[1]:{{ mongodb_port }}"
+#    - "groups.mongodb_config.index[2]:{{ mongodb_port }}"
+#    - "groups.mongodb_config.index[3]:{{ mongodb_port }}"
+#  when: (groups.mongodb_config.index(inventory_hostname) == 0)
+
+#- name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+#  mongodb_replicaset:
+#    login_host: localhost
+#    login_user: "{{ mongodb_database_user }}"
+#    login_password: "{{ mongodb_database_password }}"
+#    replica_set: "{{ mongodb_replicaset_name }}"
+#    members:
+#    - "groups.mongodb_shard1.index[0]:{{ mongodb_port }}"
+#    - "groups.mongodb_shard1.index[1]:{{ mongodb_port }}"
+#    - "groups.mongodb_shard1.index[2]:{{ mongodb_port }}"
+#    - "groups.mongodb_shard1.index[3]:{{ mongodb_port }}"
+#  when: (groups.mongodb_shard1.index(inventory_hostname) == 0)
+
+# - name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+#   template:
+#     src: initrs.js.j2
+#     dest: /tmp/initrs.js
+#   when:  (groups.mongodb_config.index(inventory_hostname) == 0)
+
+
+# - name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+#   template:
+#     src: initrs.js.j2
+#     dest: /tmp/initrs.js
+#   when:  (groups.mongodb_shard1.index(inventory_hostname) == 0)
+
+- name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+  template:
+    src: "{{ hostvars[inventory_hostname].group_names[1] }}.js.j2"
+    dest: /tmp/initrs.js
+  when: (inventory_hostname in mongodb_masters)
+
+
+- name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+  shell: 'mongo --host localhost --port {{ mongodb_port }}  </tmp/initrs.js'
+  when:  (inventory_hostname in mongodb_masters)
+
+# - name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+#   shell: 'mongo --host localhost --port {{ mongodb_port }}  </tmp/initrs.js'
+#   when: (groups.mongodb_shard1.index(inventory_hostname) == 0)
+
+# - name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+#   shell: 'mongo --host localhost --port {{ mongodb_port }}  </tmp/initrs.js'
+#   when: (groups.mongodb_shard2.index(inventory_hostname) == 0)
+
+# - name: MONGODB-REPLICASET | restart_mongodb
+#   systemd:
+#     name: mongod
+#     enabled: yes
+#     state: restarted
+
+- name: MONGODB-REPLICASET | Wait reaplica set for voting
+  pause:
+    seconds: 20
+
+
+
+#- name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+#  mongodb_replicaset:
+#    login_host: localhost
+    #login_user: "{{ mongodb_database_user }}"
+    #login_password: "{{ mongodb_database_password }}"
+    #login_database: admin
+#    replica_set: "{{ mongodb_replicaset_name }}"
+#    members:
+    #- "groups.mongodb_shard2.index[0].{{ domain }}:{{ mongodb_port }}"
+#    - "groups.mongodb_shard2.index[1].{{ domain }}:{{ mongodb_port }}"
+#    - "groups.mongodb_shard2.index[2].{{ domain }}:{{ mongodb_port }}"
+#    - "groups.mongodb_shard2.index[3].{{ domain }}:{{ mongodb_port }}"
+#  when: ( groups.mongodb_shard2.index(inventory_hostname) == 0 )
+
+- name: MONGODB-REPLICASET | Create {{ mongodb_database_user }} user for ReplicaSet
+  mongodb_user:
+    database: admin
+    name: "{{ mongodb_database_user }}"
+    password: "{{ mongodb_database_password }}"
+    login_port: "{{ mongodb_port }}"
+    state: present
+    roles:
+      - db: admin
+        role: root
+  when: (inventory_hostname in mongodb_masters)
+
+# - name: MONGODB-REPLICASET | Create {{ mongodb_database_user }} user for ReplicaSet
+#   mongodb_user:
+#     database: admin
+#     name: "{{ mongodb_database_user }}"
+#     password: "{{ mongodb_database_password }}"
+#     state: present
+#     roles:
+#       - db: admin
+#         role: root
+#   when: (groups.mongodb_shard1.index(inventory_hostname) == 0)
+
+# - name: MONGODB-REPLICASET | Create {{ mongodb_database_user }} user for ReplicaSet
+#   mongodb_user:
+#     database: admin
+#     name: "{{ mongodb_database_user }}"
+#     password: "{{ mongodb_database_password }}"
+#     state: present
+#     roles:
+#       - db: admin
+#         role: root
+#   when: (groups.mongodb_shard2.index(inventory_hostname) == 0)

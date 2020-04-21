@@ -1,0 +1,12 @@
+galaxy_info:
+  author: Agafonov
+  description: Deploy mongodb router
+  company: cloud16.ru
+  min_ansible_version: 2.9
+  galaxy_tags:
+    - mongodb
+    - mongodb_router
+dependencies:
+  - prepare
+  - mongodb-base
+  - mongodb-rs

@@ -1,0 +1,55 @@
+---
+# tasks file for mongodb shard
+
+- name: MONGODB-ROUTER|Install mongos v{{ mongodb_version }}
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - mongodb-org-mongos-{{ mongodb_version }}
+
+- name: MONGODB-ROUTER|Mongos base config
+  template:
+    src: mongos.conf.j2
+    dest: /etc/mongos.conf
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+    backup: yes
+  notify:
+    - restart_mongos
+  when: (inventory_hostname in mongodb_router)
+
+- name: MONGODB-ROUTER |Add  on-Default MongoDB Ports to SEPolicy
+  seport:
+    ports: "{{ mongodb_router_port }}"
+    proto: tcp
+    setype: mongod_port_t
+    state: present
+  when: (inventory_hostname in mongodb_router)
+
+- name: MONGODB-ROUTER|Allow port {{ mongodb_router_port }} in firewalld
+  firewalld:
+    port: "{{ mongodb_router_port }}/tcp"
+    permanent: yes
+    state: enabled
+  when: (inventory_hostname in mongodb_router)
+
+- name: MONGODB-ROUTER| Create service mongos
+  template:
+    src: mongos.service.j2
+    dest: /usr/lib/systemd/system/mongos.service
+    owner: root
+    group: root
+    mode: '0644'
+  when: (inventory_hostname in mongodb_router)
+
+
+- name: MONGODB-ROUTER| Make sure a service is running
+  systemd:
+    state: started
+    daemon_reload: yes
+    name: mongos
+  when: (inventory_hostname in mongodb_router)

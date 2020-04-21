@@ -1,0 +1,41 @@
+---
+- name: PREPARE |Install epel-release
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - epel-release
+
+- name: PREPARE |Install packages
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - ntp
+    - python2-cryptography
+    - mc
+    - checkpolicy
+    - policycoreutils-python
+    - python-pip
+
+- name: PREPARE |Set timezone
+  timezone:
+    name: "{{ ntp_timezone }}"
+
+- name: PREPARE |Enable ntpd
+  systemd:
+    name: ntpd
+    enabled: true
+    state: restarted
+
+- name:  PREPARE | "Add all names to host (bacose we do not have a DNS Server)"
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+    mode: '0644'
+    owner: root
+    group: root
+
+...

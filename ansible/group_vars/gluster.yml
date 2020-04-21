@@ -1,0 +1,9 @@
+---
+# defaults file for provision/roles/nc-gluster-setup
+gluster_brick_dir: /datadrive/gluster/brick
+gluster_brick_vol: /datadrive/gluster/brick/gv0
+gluster_brick_name: gv0
+gluster_mount_dir: /mnt/
+gluster_cluster_hosts:
+  - "{{ groups.gluster[0] }}"
+  - "{{ groups.gluster[1] }}"

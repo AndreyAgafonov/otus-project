@@ -1,0 +1,12 @@
+mongodb_router_port: 27017
+mongodb_version: 4.0.18
+mongodb_datadrive: /datadrive/mongodb
+mongodb_user: mongod
+mongodb_masters:
+  - "{{ groups.mongodb_config[0] }}"
+  - "{{ groups.mongodb_shard1[0] }}"
+  - "{{ groups.mongodb_shard2[0] }}"
+mongodb_router:
+  - "{{ groups.mongodb_router[0] }}"
+  - "{{ groups.mongodb_router[1] }}"
+  - "{{ groups.mongodb_router[2] }}"

@@ -1,0 +1,39 @@
+---
+# tasks file for mongodb-sharding
+# - name: MONGODB-SHARD | Configuring for sharding
+#   replace:
+#     path: /etc/mongod.conf
+#     regexp: "{{ item.regexp }}"
+#     replace: "{{ item.replace }}"
+#   with_items:
+#     - { regexp: '#sharding:', replace: 'sharding:' }
+#     - { regexp: '#  clusterRole: configsvr', replace: '  clusterRole: {{ mongodb_clusterRole }}' }
+
+# - name: MONGODB-SHARD | Restart mongodb hosts
+#   systemd:
+#     state: restarted
+#     name: mongod
+- name: restart_mongos
+  systemd:
+    name: mongos
+    enabled: yes
+    daemon_reload: yes
+    state: restarted
+  when: (inventory_hostname in mongodb_router)
+
+- name: MONGODB-SHARD | Delivery template for init shard
+  template:
+    src: initsh.js.j2
+    dest: /tmp/initsh.js
+  when: (inventory_hostname in mongodb_router[0])
+
+- name: MONGODB-SHARD |Init Shard cluster
+  shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/initsh.js'
+  when: (inventory_hostname in mongodb_router[0])
+
+
+#- name: MONGODB-SHARD |
+#- name: MONGODB-SHARD |
+#- name: MONGODB-SHARD |
+#- name: MONGODB-SHARD |
+#- name: MONGODB-SHARD |

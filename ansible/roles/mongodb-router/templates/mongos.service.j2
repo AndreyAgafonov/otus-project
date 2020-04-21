@@ -1,0 +1,20 @@
+[Unit]
+Description=High-performance, schema-free document-oriented database
+After=syslog.target network.target disable-transparent-huge-pages.target
+
+[Service]
+LimitFSIZE=infinity
+LimitCPU=infinity
+LimitAS=infinity
+LimitNOFILE=64000
+LimitNPROC=64000
+TasksMax=infinity
+TasksAccounting=false
+User={{ mongodb_user }}
+Group={{ mongodb_user }}
+Restart=on-failure
+RestartSec=60
+ExecStart=/usr/bin/mongos -f /etc/mongos.conf
+
+[Install]
+WantedBy=multi-user.target

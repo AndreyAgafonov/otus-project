@@ -1,0 +1,11 @@
+---
+# tasks file for mongodb-base
+
+
+#- name: MONGODB-BASE |Install MongoDB on Ubuntu
+#  include_tasks: ubuntu.yml
+#  when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: MONGODB-BASE |Install MongoDB on CentOS
+  include_tasks: centos.yml
+  when: ansible_facts['distribution'] == 'CentOS'

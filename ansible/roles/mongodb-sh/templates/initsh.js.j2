@@ -1,0 +1,5 @@
+use admin
+sh.stopBalancer()
+sh.addShard( "{{ hostvars[ groups['mongodb_shard1'][0]]['mongodb_replicaset_name'] }}/{{ groups.mongodb_shard1[0] }}.{{ domain }}:{{ hostvars[ groups['mongodb_shard1'][0]]['mongodb_port'] }}" )
+sh.addShard( "{{ hostvars[ groups['mongodb_shard2'][0]]['mongodb_replicaset_name'] }}/{{ groups.mongodb_shard2[0] }}.{{ domain }}:{{ hostvars[ groups['mongodb_shard2'][0]]['mongodb_port'] }}" )
+sh.startBalancer()

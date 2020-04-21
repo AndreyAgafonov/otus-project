@@ -1,0 +1,8 @@
+---
+# defaults file for provision/roles/nc-keepalived
+
+
+
+# keepalive_interface: eth1
+# keepalive_virtual_router_id: 1
+# keepalive_virtual_ipaddress: 1172.20.1.100

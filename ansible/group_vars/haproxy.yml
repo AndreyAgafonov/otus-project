@@ -1,0 +1,8 @@
+---
+haproxy_port: '80'
+# haproxy_username: 'stat'
+# haproxy_password: 'statpass'
+
+keepalive_interface: eth1
+#keepalive_virtual_router_id: 1
+keepalive_virtual_ipaddress: 172.20.1.100

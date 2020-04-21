@@ -1,0 +1,31 @@
+---
+# tasks file for mongodb-base
+- name: MONGODB-BASE |Add repository key for MongoDB {{ mongodb_version }}.
+  shell: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
+
+- name: MONGODB-BASE |Add repository
+  apt_repository:
+        repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse"
+        state: present
+        filename: mongodb-org-4.0.list
+
+- name: MONGODB-BASE |Backup mongod.service
+  shell: sudo cp /lib/systemd/system/mongod.service /lib/systemd/system/mongod.service.bak
+
+- name: MONGODB-BASE |Backup mongod.conf
+  shell: sudo cp /etc/mongod.conf /etc/mongod.conf.bak
+
+- name: MONGODB-BASE |Stop service mongod, if started
+  systemd: name=mongod.service state=stopped
+
+- name: MONGODB-BASE |Update mongod {{ mongodb_version }}
+  apt: pkg=mongodb-org-server={{ mongodb_version }},mongodb-org-shell={{ mongodb_version }},mongodb-org-tools={{ mongodb_version }},sysstat state=installed update_cache=true
+
+- name: MONGODB-BASE |Restore mongod.conf
+  shell: sudo cp /etc/mongod.conf.bak /etc/mongod.conf
+
+- name: MONGODB-BASE |Restore mongod.service
+  shell: sudo cp /lib/systemd/system/mongod.service.bak /lib/systemd/system/mongod.service
+
+- name: MONGODB-BASE |Start service mongod
+  systemd: name=mongod.service state=started

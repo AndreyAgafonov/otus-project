@@ -1,0 +1,12 @@
+use admin
+rs.initiate(
+  {
+    _id : "{{ mongodb_replicaset_name }}",
+    members: [
+      { _id : 0, host : "{{ groups.mongodb_shard2[0] }}.{{ domain }}:{{ mongodb_port }}", hidden: false, priority: 2, votes: 1 },
+      { _id : 1, host : "{{ groups.mongodb_shard2[1] }}.{{ domain }}:{{ mongodb_port }}", hidden: false, priority: 1, votes: 1 },
+      { _id : 2, host : "{{ groups.mongodb_shard2[2] }}.{{ domain }}:{{ mongodb_port }}", hidden: false, priority: 1, votes: 1 },
+      { _id : 3, host : "{{ groups.mongodb_shard2[3] }}.{{ domain }}:{{ mongodb_port }}", hidden: true, priority: 0, votes: 0 }
+    ]
+  }
+)
