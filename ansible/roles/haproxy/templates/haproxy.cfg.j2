@@ -68,6 +68,7 @@ frontend cer
 backend cer
     cookie SERVERUSED insert indirect nocache
     balance     roundrobin
+    default-server inter 3s fall 3 rise 2
     option forwardfor
     option httpchk HEAD / HTTP/1.1\r\nHost:nc.example.org
     server {{ groups.cer[0] }} 172.20.1.15:80 check

@@ -1,0 +1,8 @@
+- type: log
+  enabled: true
+  paths:
+      - {{ filebeat_path_log }}
+  fields:
+    type: _doc
+  fields_under_root: true
+  scan_frequency: 5s

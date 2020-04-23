@@ -7,3 +7,8 @@
     state: restarted
     enabled: yes
 
+- name: restart_rsyslog
+  service:
+    name: rsyslog
+    state: restarted
+

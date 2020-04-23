@@ -21,13 +21,18 @@
     - keepalived
     - haproxy
 
-- name: Deploy Kibana
-  hosts: kibana
+# - name: Deploy Kibana
+#   hosts: kibana
+#   become: yes
+#   roles:
+#     - kibana
+
+- name: Deploy logstash
+  hosts:
+    - haproxy
   become: yes
   roles:
-    - kibana
-
-
+    - filebeat
 
 
 

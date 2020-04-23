@@ -1,0 +1,22 @@
+---
+# tasks file for nginx
+ - name: DOCKER | Install Docker
+   block:
+    - name: Install dependencies for install Docker
+      yum:
+        name: "{{ item }}"
+      loop:
+        - "{{ docker_prepakages }}"
+      tags:
+        - docker_pakage_depends
+        - packeges
+
+# Какая то кривизна с добавлением репы, пока добавляю при помощи шела - см след шаг.
+#    - name: Add Docker Repo
+#      yum_repository:
+#        name: docker
+#        description: Docker Reros
+#        file: docker-ce.repo
+#        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+
+   when: ansible_facts['distribution'] == 'CentOS'

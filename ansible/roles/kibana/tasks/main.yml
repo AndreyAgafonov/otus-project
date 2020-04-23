@@ -10,15 +10,25 @@
         state: present
         reload: yes
 
+    # - name:  KIBANA |Put SELinux in permissive mode
+    #   selinux:
+    #     policy: targeted
+    #     state: permissive
+
     - name: KIBANA | elasticsearch, install python-setup-tools
       yum:
-        name: python-setuptools
+        name:
+        - python-pip
+        - python-devel
+        - gcc
+        - python-setuptools
         state: latest
 
     - name: KIBANA | install pip
-      easy_install:
+      pip:
         name: pip
         state: latest
+        extra_args: --upgrade
 
     - name: KIBANA | elasticsearch, install docker-compose for python
       pip:
@@ -67,30 +77,36 @@
       with_items:
         - { src: docker-compose.yml.j2, dest: "{{ kibana_work_dir }}/docker-compose.yml" }
 
-    - name: KIBANA | Run Kibana in Docker Container ("{{ kibana_work_dir }}")
-      docker_compose:
-        project_src: "{{ kibana_work_dir }}"
-        build: yes
-      #register: output
-      tags:
-        - docker-copmose
+    - name: KIBANA | Run Kibana in Docker Container ("{{ kibana_work_dir }}")1
+      command: "docker-compose -f {{ kibana_work_dir }}/docker-compose.yml up -d"
 
-    - pause:
-        minutes: 1
+    # - name: KIBANA | Run Kibana in Docker Container ("{{ kibana_work_dir }}")
+    #   docker_compose:
+    #     project_src: "{{ kibana_work_dir }}"
+    #     build: yes
+    #   #register: output
+    #   tags:
+    #     - docker-copmose
 
     - name: Check container elasticsearch status (GET) ant return 200 code
       uri:
-        url: http://127.0.0.1:9200/_cat/health
+        url: http://127.0.0.1:{{ elasticsearch_port }}/_cat/health
         method: GET
+      register: result
+      until: result.status == 200
+      retries: 60
+      delay: 5
       tags:
         - health check
 
-    - pause:
-        minutes: 1
-    - name: Check container elasticsearch status (GET) ant return 200 code
+    - name: Check container kibana status (GET) ant return 200 code
       uri:
-        url: http://127.0.0.1:5601
+        url: http://127.0.0.1:{{ kibana_port }}
         method: GET
+      register: result
+      until: result.status == 200
+      retries: 60
+      delay: 5
       tags:
         - health check
    when: ansible_facts['distribution'] == 'CentOS'

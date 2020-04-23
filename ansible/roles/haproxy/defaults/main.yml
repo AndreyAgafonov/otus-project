@@ -3,3 +3,6 @@
 # port: '80'
 # username: 'stat'
 # password: 'statpass'
+
+haproxy_port: 80
+#haproxy_log_path: /var/log/haproxy.log

@@ -9,6 +9,9 @@ mntfolder: /nfs
 nfsserver_host: 192.168.11.160
 datafolder: /datadrive
 
+logstash_bits_port: 5044
+filebeat_logstash_server: "{{ groups.kibana[0] }}.{{ domain }}:{{ logstash_bits_port }}"
+filebeat_version: 7.6.2
 ansible_user: vagrant
 ansible_ssh_private_key_file: /vagrant/ansible.pem
 
