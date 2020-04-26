@@ -10,3 +10,7 @@ mongodb_router:
   - "{{ groups.mongodb_router[0] }}"
   - "{{ groups.mongodb_router[1] }}"
   - "{{ groups.mongodb_router[2] }}"
+mongodb_log: /var/log/mongodb/mongod.log
+filebeat_path_log: "{{ mongodb_log }}"
+filebeat_index: filebeat-mongodb
+filebeat_app_name: mongodb

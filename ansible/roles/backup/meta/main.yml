@@ -1,9 +1,9 @@
 galaxy_info:
   author: Agafonov Andrey
-  description: deploy cer
+  description: Prepare backup
   company: cloud16.ru
   min_ansible_version: 2.9
   galaxy_tags:
-    - cer
+    - backup
 dependencies:
-  - docker
+  - prepare

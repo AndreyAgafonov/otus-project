@@ -1,22 +1,70 @@
 ---
 # tasks file for nginx
- - name: DOCKER | Install Docker
-   block:
-    - name: Install dependencies for install Docker
-      yum:
-        name: "{{ item }}"
-      loop:
-        - "{{ docker_prepakages }}"
-      tags:
-        - docker_pakage_depends
-        - packeges
 
-# Какая то кривизна с добавлением репы, пока добавляю при помощи шела - см след шаг.
-#    - name: Add Docker Repo
-#      yum_repository:
-#        name: docker
-#        description: Docker Reros
-#        file: docker-ce.repo
-#        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+- name: CER | elasticsearch, install python-setup-tools
+  yum:
+    name: "{{ package }}"
+    state: latest
+  vars:
+    package:
+    - python-pip
+    - python-devel
+    - gcc
+    - python-setuptools
 
-   when: ansible_facts['distribution'] == 'CentOS'
+- name: CER | install pip
+  pip:
+    name: pip
+    state: latest
+    extra_args: --upgrade
+
+- name: CER | elasticsearch, install docker-compose for python
+  pip:
+    name:
+    - docker-compose
+
+# - name: CER | Create a network
+#   docker_network:
+#     name: globalnetwork
+
+# - name: CER | elasticsearch, Create work directory for elasticsearch {{ elasticsearch_data }}
+#   file:
+#     path: "{{ item.path }}"
+#     state: directory
+#     owner: vagrant
+#     group: root
+#     mode: '0744'
+#   with_items:
+#     - { path: "{{ elasticsearch_data }}" }
+#     - { path: "{{ logstash_work_dir }}" }
+#     - { path: "{{ logstash_conf_dir }}" }
+#     - { path: "{{ logstash_data }}" }
+#     - { path: "{{ kibana_work_dir }}" }
+
+#=====
+- name: CER | delivery config files
+  template:
+    backup: true
+    owner: root
+    group: root
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: appsettings.override.json.j2, dest: "/opt/appsettings.override.json" }
+    - { src: logging-nlog.override.json.j2, dest: "/opt/logging-nlog.override.json" }
+    - { src: docker-compose.yml.j2, dest: "/opt/docker-compose.yml" }
+
+
+#====
+# - name: CER | Kibana, Delivery Docker-compose to a work Dir ("{{ kibana_work_dir }}/docker-compose.yml")
+#   template:
+#     backup: true
+#     owner: root
+#     group: root
+#     src: "{{ item.src }}"
+#     dest: "{{ item.dest }}"
+#   with_items:
+#     - { src: docker-compose.yml.j2, dest: "{{ kibana_work_dir }}/docker-compose.yml" }
+
+- name: CER | Run Kibana in Docker Container ("{{ kibana_work_dir }}")1
+  command: "docker-compose -f /opt/docker-compose.yml up -d"

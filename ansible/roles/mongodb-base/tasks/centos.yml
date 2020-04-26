@@ -92,12 +92,12 @@
     permanent: yes
     state: enabled
 
-- name: Disable SELinux
-  selinux:
-    state: disabled
+# - name: Disable SELinux
+#   selinux:
+#     state: disabled
 
-- name: Disable Linux
-  command: setenforce 0
+# - name: Disable Linux
+#   command: setenforce 0
 
 
 - name: MONGODB-BASE |Mongodb base config
@@ -109,14 +109,18 @@
     mode: '0644'
     force: yes
     backup: yes
-  notify:
-    - start_mongodb
+  # notify:
+  #   - start_mongodb
+- name: MONGODB-BASE | Make sure a service is started
+  systemd:
+    state: restarted
+    name: mongod
+    enabled: yes
 
 - name: MONGODB-BASE | Make sure a service is running
   systemd:
     state: started
     name: mongod
-
 
 
 

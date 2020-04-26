@@ -1,17 +1,9 @@
 #!/bin/bash
 chmod 0600 /vagrant/ansible.pem
+all_dbs=(mdb-afina mdb-fobos mdb-gera mdb-afrodita mdb-geya mdb-clio mdb-erida mdb-femida mdb-eos)
 
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-afina -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-fobos -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-gera -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-deimos -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-afrodita -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-geya -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-clio -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-nica -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-erida -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-femida -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-gestia -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-eos -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
+for target_host in ${all_dbs[*]}
+do
+  echo "clear data fromt" $target_host
+  ssh -q -o "StrictHostKeyChecking no" vagrant@${target_host} -i /vagrant/ansible.pem 'sudo systemctl stop mongod && sudo rm -rf /datadrive'
+done

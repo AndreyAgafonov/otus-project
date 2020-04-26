@@ -13,3 +13,4 @@ keepalive_virtual_ipaddress: 172.20.1.100
 filebeat_path_log: "{{ haproxy_log_path }}"
 filebeat_path_error:
 filebeat_app_name: haproxy
+filebeat_index: filebeat-haproxy

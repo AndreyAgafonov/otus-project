@@ -1,0 +1,5 @@
+filebeat_path_log: /var/log/mongobacup.log
+filebeat_path_error:
+filebeat_app_name: mongo-backup
+filebeat_index: filebeat-mongo-backup
+keepalive_virtual_ipaddress: 172.20.1.40

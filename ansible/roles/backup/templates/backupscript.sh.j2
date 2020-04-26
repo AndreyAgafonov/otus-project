@@ -1,0 +1,18 @@
+#!/bin/bash
+
+backup_folder_name=$(echo "{{ gluster_backup_dir }}/$(date +"%Y-%m-%d-%H-%M")")
+mongodb_host="{{ groups.mongodb_config[0]}}.{{ domain }}"
+#mdb-afina.cloud16.home
+mongodb_port="{{ mongodb_router_port }}"
+#27017
+mongodb_pass="{{ mongodb_database_password }}"
+#d3Csp3P
+mongodb_authdb=admin
+mongodb_backup_db="{{ cer_db }}"
+#test
+
+#echo $backup_folder_name
+
+#понеслась
+mkdir $backup_folder_name
+mongodump --gzip --port $mongodb_port --host $mongodb_host --username admin --password $mongodb_pass --authenticationDatabase $mongodb_authdb --db $mongodb_backup_db --out $backup_folder_name

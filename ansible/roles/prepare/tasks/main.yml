@@ -38,4 +38,7 @@
     owner: root
     group: root
 
+- name:  PREPARE | Set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
 ...

@@ -1,0 +1,12 @@
+{
+  "NLog": {
+    "autoReload": true,
+    "rules": [
+      {
+        "logger": "*",
+        "minLevel": "Trace",
+        "writeTo": "console"
+      }
+    ]
+  }
+}

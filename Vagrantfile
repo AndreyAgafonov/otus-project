@@ -87,6 +87,26 @@
 # Определяем список машин ддя развертывания
 MACHINES = {
 
+    ##########CER
+    :cerappolo => {
+      :box_name => "centos/7",
+      :ip_addr => '172.20.1.15',
+      :machine_cpu => '1',
+      :machine_memory => '256',
+      },
+    :cerdionis => {
+      :box_name => "centos/7",
+      :ip_addr => '172.20.1.16',
+      :machine_cpu => '1',
+      :machine_memory => '256',
+      },
+    :cermorphius => {
+      :box_name => "centos/7",
+      :ip_addr => '172.20.1.17',
+      :machine_cpu => '1',
+      :machine_memory => '256',
+      },
+
       ####kibana:
     :kibanaplutos => {
       :box_name => "centos/7",
@@ -95,34 +115,33 @@ MACHINES = {
       :machine_memory => '2048',
       },
 
-    ####haproxy:
+    ###haproxy:
     :haproxyzefs => {
       :box_name => "centos/7",
       :ip_addr => '172.20.1.10',
       :machine_cpu => '1',
-      :machine_memory => '128',
+      :machine_memory => '512',
       },
     :haproxyaid => {
       :box_name => "centos/7",
       :ip_addr => '172.20.1.11',
       :machine_cpu => '1',
-      :machine_memory => '128',
+      :machine_memory => '512',
       },
 
-####gluster:
-  # :glusterares => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.40',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '512',
-  #   },
-  # :glustererot => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.41',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '512',
-  #   },
-
+###gluster:
+  :glusterares => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.41',
+    :machine_cpu => '1',
+    :machine_memory => '512',
+    },
+  :glustererot => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.42',
+    :machine_cpu => '1',
+    :machine_memory => '512',
+    },
 
   # :glustergefest => {
   #   :box_name => "centos/7",
@@ -132,7 +151,7 @@ MACHINES = {
   #   },
 
 
-####NFS Server
+###NFS Server
   # :tartarus => {
   #   :box_name => "centos/7",
   #   :ip_addr => '172.20.1.200',
@@ -140,25 +159,25 @@ MACHINES = {
   #   :machine_memory => '256',
   #   },
 
-####config
-  # :mdbafina => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.20',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '386',
-  #   },
-  # :mdbfobos => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.21',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '386',
-  #   },
-  # :mdbgera => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.22',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '386',
-  #   },
+###config
+  :mdbafina => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.20',
+    :machine_cpu => '1',
+    :machine_memory => '386',
+    },
+  :mdbfobos => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.21',
+    :machine_cpu => '1',
+    :machine_memory => '386',
+    },
+  :mdbgera => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.22',
+    :machine_cpu => '1',
+    :machine_memory => '386',
+    },
   # :mdbdeimos => {
   #   :box_name => "centos/7",
   #   :ip_addr => '172.20.1.23',
@@ -166,25 +185,25 @@ MACHINES = {
   #   :machine_memory => '386',
   # },
 
-###shard1 sparta
-  # :mdbafrodita => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.24',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '386',
-  #   },
-  # :mdbgeya => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.25',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '386',
-  #   },
-  # :mdbclio => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.26',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '386',
-  #   },
+##shard1 sparta
+  :mdbafrodita => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.24',
+    :machine_cpu => '1',
+    :machine_memory => '386',
+    },
+  :mdbgeya => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.25',
+    :machine_cpu => '1',
+    :machine_memory => '386',
+    },
+  :mdbclio => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.26',
+    :machine_cpu => '1',
+    :machine_memory => '386',
+    },
   # :mdbnica => {
   #   :box_name => "centos/7",
   #   :ip_addr => '172.20.1.27',
@@ -192,26 +211,26 @@ MACHINES = {
   #   :machine_memory => '386',
   # },
 
-### shard2 rodos
-  # :mdbfemida => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.29',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '386',
-  #   },
-  # :mdberida => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.28',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '386',
-  #   },
+## shard2 rodos
+  :mdbfemida => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.29',
+    :machine_cpu => '1',
+    :machine_memory => '386',
+    },
+  :mdberida => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.28',
+    :machine_cpu => '1',
+    :machine_memory => '386',
+    },
 
-  # :mdbeos => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.31',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '386',
-  #   },
+  :mdbeos => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.31',
+    :machine_cpu => '1',
+    :machine_memory => '386',
+    },
 
   # :mdbgestia => {
   #   :box_name => "centos/7",
@@ -219,6 +238,14 @@ MACHINES = {
   #   :machine_cpu => '1',
   #   :machine_memory => '386',
   # },
+
+  :prometheusposeydon => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.220',
+    :machine_cpu => '1',
+    :machine_memory => '512',
+  },
+
 
   ###################################
   :ansible => { #must be last

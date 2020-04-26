@@ -1,0 +1,26 @@
+version: '2'
+services:
+  {{ cer_container_name }}:
+    environment:
+      - name=cer
+      - hostname=cer
+      - user=0
+      - env=ASPNETCORE_ENVIRONMENT=Staging
+      - env=ASPNETCORE_URLS=http://+:80
+      - env=ASPNETCORE_VERSION=3.0.1
+      - env=DOTNET_RUNNING_IN_CONTAINER=true
+      - env=DOTNET_VERSION=3.0.1
+      - env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - node.name={{ cer_container_name }}
+      - discovery.type=single-node
+    image: andreyagafonov/cer:1.0.56
+    container_name: {{ cer_container_name }}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - /opt/appsettings.override.json:/app/_config/appsettings.override.json:ro
+      - /opt/logging-nlog.override.json:/app/_config/logging-nlog.override.json:ro
+    ports:
+      - {{ cer_port }}:80

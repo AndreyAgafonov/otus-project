@@ -33,8 +33,8 @@
   with_items:
     - { regexp: '^#security:', replace: 'security:' }
     - { regexp: '^#  keyFile: /etc/ssl/mongodb-keyfile', replace: '  keyFile: /etc/ssl/mongodb-keyfile' }
-  notify:
-    - restart_mongodb
+  # notify:
+  #   - restart_mongodb
 
 # - name: MONGODB-REPLICASET | Configuring for sharding
 #   replace:

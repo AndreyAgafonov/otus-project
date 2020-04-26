@@ -1,17 +1,18 @@
 ---
-# - name: install mongod
-#   hosts: mongodb
-#   become: true
-#   gather_facts: yes
-#   roles:
-#     - mongodb-sh
+- name: install mongod
+  hosts: mongodb
+  become: true
+  gather_facts: yes
+  roles:
+    - mongodb-sh
 
-# - name: Deploy GlusterFS nodes
-#   hosts: gluster
-#   become: yes
-#   roles:
-#     - gluster-setup
-    # - gluster-run
+- name: Deploy GlusterFS nodes
+  hosts: gluster
+  become: yes
+  roles:
+    - gluster-setup
+    - keepalived
+#     ## - gluster-run
 
 
 - name: Deploy HAProxy
@@ -21,19 +22,33 @@
     - keepalived
     - haproxy
 
-# - name: Deploy Kibana
-#   hosts: kibana
+# - name: Deploy cer
+#   hosts: cer
 #   become: yes
 #   roles:
-#     - kibana
+#     - cer
 
-- name: Deploy logstash
+- name: Deploy filebeat
   hosts:
+    - mongodb
     - haproxy
+
+
   become: yes
   roles:
     - filebeat
 
+- name: Deploy Kibana
+  hosts: kibana
+  become: yes
+  roles:
+    - kibana
+
+- name: backup
+  hosts: backup
+  become: yes
+  roles:
+    - backup
 
 
   #   - name: setup backend1

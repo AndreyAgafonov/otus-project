@@ -11,10 +11,12 @@ filebeat.config.modules:
 
 setup.template.settings:
   index.number_of_shards: 1
+  index.number_of_replicas: 0
 
 output.logstash:
   enabled: true
   hosts: "{{ filebeat_logstash_server }}"
+  index: "{{ filebeat_index }}"
   # ssl.certificate_authorities: "/etc/pki/client/cert.pem"
 
 logging:
