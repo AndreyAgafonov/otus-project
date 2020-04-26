@@ -1,10 +1,10 @@
 ---
-- name: install mongod
-  hosts: mongodb
-  become: true
-  gather_facts: yes
-  roles:
-    - mongodb-sh
+# - name: install mongod
+#   hosts: mongodb
+#   become: true
+#   gather_facts: yes
+#   roles:
+#     - mongodb-sh
 
 - name: Deploy GlusterFS nodes
   hosts: gluster
@@ -12,8 +12,6 @@
   roles:
     - gluster-setup
     - keepalived
-#     ## - gluster-run
-
 
 - name: Deploy HAProxy
   hosts: haproxy
@@ -28,38 +26,25 @@
 #   roles:
 #     - cer
 
-- name: Deploy filebeat
-  hosts:
-    - mongodb
-    - haproxy
+# - name: Deploy monitoring and logging tools
+#   hosts:
+#     - mongodb
+#     - haproxy
+#     - gluster
+#     - cer
+#   become: yes
+#   roles:
+#     - filebeat
 
+# - name: Deploy Kibana
+#   hosts: kibana
+#   become: yes
+#   roles:
+#     - kibana
 
-  become: yes
-  roles:
-    - filebeat
+# - name: backup
+#   hosts: backup
+#   become: yes
+#   roles:
+#     - backup
 
-- name: Deploy Kibana
-  hosts: kibana
-  become: yes
-  roles:
-    - kibana
-
-- name: backup
-  hosts: backup
-  become: yes
-  roles:
-    - backup
-
-
-  #   - name: setup backend1
-  # hosts: backend1
-  # become: yes
-  # roles:
-  #   - nc-gluster-client
-  #   - nc-nginx
-  #   #    - nc-netdata-slave
-  #   - nc-backup-user
-  #   - nc-restic
-  #   - nc-redis
-  #   - nc-php
-  #   - nc-mysql

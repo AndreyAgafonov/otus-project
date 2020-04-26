@@ -42,4 +42,4 @@
 - name: config bacup script
   lineinfile:
     path: /etc/crontab
-    line: "*/5 * * * * root   bash +x /opt/backupscript.sh >> /var/log/mongobackup.log"
+    line: "*/5 * * * * root   bash +x /opt/backupscript.sh"

@@ -1,4 +1,4 @@
-mongodb_router_port: 27017
+mongodb_router_port: "{{ 27017 | string }}"
 mongodb_version: 4.0.18
 mongodb_datadrive: /datadrive/mongodb
 mongodb_user: mongod
@@ -6,11 +6,9 @@ mongodb_masters:
   - "{{ groups.mongodb_config[0] }}"
   - "{{ groups.mongodb_shard1[0] }}"
   - "{{ groups.mongodb_shard2[0] }}"
-mongodb_router:
-  - "{{ groups.mongodb_router[0] }}"
-  - "{{ groups.mongodb_router[1] }}"
-  - "{{ groups.mongodb_router[2] }}"
+
 mongodb_log: /var/log/mongodb/mongod.log
+mongodb_pid: /var/run/mongodb/mongod.pid
 filebeat_path_log: "{{ mongodb_log }}"
 filebeat_index: filebeat-mongodb
 filebeat_app_name: mongodb

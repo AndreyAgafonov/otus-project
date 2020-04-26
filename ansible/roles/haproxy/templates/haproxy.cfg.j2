@@ -43,15 +43,15 @@ defaults
 #---------------------------------------------------------------------
 #HAProxy Monitoring Config
 #---------------------------------------------------------------------
-# frontend stats
-#     bind *:8080
-#     stats enable
-#     stats uri /stats
-#     stats refresh 10s
-#     stats show-legends
-#     stats realm Haproxy\ Statistics
-#     #stats auth {\{ username }\}:{\{ password }\}    #User and Password for login to the monitoring dashboard
-#     stats admin if TRUE
+frontend stats
+    bind *:8080
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+    stats show-legends
+    stats realm Haproxy\ Statistics
+    #stats auth {\{ username }\}:{\{ password }\}    #User and Password for login to the monitoring dashboard
+    stats admin if TRUE
 
 #---------------------------------------------------------------------
 # FrontEnd Configuration
@@ -59,7 +59,8 @@ defaults
 frontend cer
     bind *:{{ haproxy_port }}
     mode http
-    redirect scheme https if !{ ssl_fc }
+    #redirect scheme https if !{ ssl_fc }
+    http-response add-header X-Host {{ inventory_hostname }}
     default_backend cer
 
 #---------------------------------------------------------------------
@@ -70,7 +71,7 @@ backend cer
     balance     roundrobin
     default-server inter 3s fall 3 rise 2
     option forwardfor
-    option httpchk HEAD / HTTP/1.1\r\nHost:nc.example.org
+    option httpchk GET /api/server/info
     server {{ groups.cer[0] }} 172.20.1.15:80 check
     server {{ groups.cer[1] }} 172.20.1.16:80 check
     server {{ groups.cer[2] }} 172.20.1.17:80 check

@@ -94,7 +94,7 @@
 #     dest: /tmp/initrs.js
 #   when:  (groups.mongodb_shard1.index(inventory_hostname) == 0)
 
-- name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
+- name: MONGODB-REPLICASET |Config Replica set {{ mongodb_replicaset_name }}
   template:
     src: "{{ hostvars[inventory_hostname].group_names[1] }}.js.j2"
     dest: /tmp/initrs.js
@@ -119,25 +119,18 @@
 #     enabled: yes
 #     state: restarted
 
-- name: MONGODB-REPLICASET | Wait reaplica set for voting
+- name: MONGODB-REPLICASET | Pause reaplica set make voting
   pause:
     seconds: 20
 
+- name: MONGODB-REPLICASET | Check ReplicaSet is master
+  command: echo "rs.status().members[0].stateStr" | mongo  --port {{ mongodb_port }} --quiet
+  retries: 60
+  delay: 5
+  register: result
+  until: result.rc != "PRIMARY"
+  when:  (inventory_hostname in mongodb_masters)
 
-
-#- name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
-#  mongodb_replicaset:
-#    login_host: localhost
-    #login_user: "{{ mongodb_database_user }}"
-    #login_password: "{{ mongodb_database_password }}"
-    #login_database: admin
-#    replica_set: "{{ mongodb_replicaset_name }}"
-#    members:
-    #- "groups.mongodb_shard2.index[0].{{ domain }}:{{ mongodb_port }}"
-#    - "groups.mongodb_shard2.index[1].{{ domain }}:{{ mongodb_port }}"
-#    - "groups.mongodb_shard2.index[2].{{ domain }}:{{ mongodb_port }}"
-#    - "groups.mongodb_shard2.index[3].{{ domain }}:{{ mongodb_port }}"
-#  when: ( groups.mongodb_shard2.index(inventory_hostname) == 0 )
 
 - name: MONGODB-REPLICASET | Create {{ mongodb_database_user }} user for ReplicaSet
   mongodb_user:
@@ -146,29 +139,6 @@
     password: "{{ mongodb_database_password }}"
     login_port: "{{ mongodb_port }}"
     state: present
-    roles:
-      - db: admin
-        role: root
+    roles: root
   when: (inventory_hostname in mongodb_masters)
 
-# - name: MONGODB-REPLICASET | Create {{ mongodb_database_user }} user for ReplicaSet
-#   mongodb_user:
-#     database: admin
-#     name: "{{ mongodb_database_user }}"
-#     password: "{{ mongodb_database_password }}"
-#     state: present
-#     roles:
-#       - db: admin
-#         role: root
-#   when: (groups.mongodb_shard1.index(inventory_hostname) == 0)
-
-# - name: MONGODB-REPLICASET | Create {{ mongodb_database_user }} user for ReplicaSet
-#   mongodb_user:
-#     database: admin
-#     name: "{{ mongodb_database_user }}"
-#     password: "{{ mongodb_database_password }}"
-#     state: present
-#     roles:
-#       - db: admin
-#         role: root
-#   when: (groups.mongodb_shard2.index(inventory_hostname) == 0)

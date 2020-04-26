@@ -11,12 +11,17 @@
 #     fstype: xfs
 #     dev: /dev/sdb1
 #     opts: -i size=512
+- name: Ansible check directory exists example.
+  stat:
+    path: "{{ gluster_brick_dir }}"
+  register: check_dir
 
 - name: create directory
   file:
     path: "{{ gluster_brick_dir }}"
     state: directory
     recurse: yes
+  when: check_dir.stat.exists == false
 
 # - name: mount /dev/sdb1
 #   mount:

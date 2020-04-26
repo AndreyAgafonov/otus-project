@@ -17,6 +17,15 @@ ansible_ssh_private_key_file: /vagrant/ansible.pem
 
 
 
+mongodb_user_backup: dbuser_backup
+mongodb_user_backup_pass: dbuser_backup
+mongodb_user_cer: dbuser_cer
+mongodb_user_cer_pass: dbuser_cer
+mongodb_router:
+  - "{{ groups.mongodb_router[0] }}"
+  - "{{ groups.mongodb_router[1] }}"
+  - "{{ groups.mongodb_router[2] }}"
+
 gluster_backup_dir: /databackup
 gluster_host: "{{ groups.gluster[0] }}"
 gluster_brick_name: gv0

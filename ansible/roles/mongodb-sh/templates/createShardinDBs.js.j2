@@ -1,0 +1,22 @@
+use {{ cer_db }}
+db.scheme.insertOne({ "DBVersion": 1, "comment": "Init sharding" })
+sh.enableSharding("{{ cer_db }}")
+
+// Example for lookup sharding work
+db.city.insertMany( [
+     {  City: "Moscow", Population: 9000000, "capital": 1  },
+     {  City: "Kazan", Population: 1200000, "river": [ "Kazanka", "volga" ]},
+     {  City: "Samara", Population: 1100000, "beer": "Na dne" },
+     {  City: "Ekat", Population: 1900000 },
+     {  City: "SPB", Population: 6000000 },
+     {  City: "Sochi", Population: 800000 },
+     {  City: "Ulyanovsk", Population: 300000 },
+     {  City: "Izhevsk", Population: 270000 },
+     {  City: "Kirov", Population: 320000 },
+     {  City: "Tolyatti", Population: 450000 },
+     {  City: "Chaboksary", Population: 270000 },
+     ])
+
+// db.getCollectionNames().forEach(function(coll_name) {
+//   db.runCommand( { shardcollection : coll_name, key : { _id : 1 } } )
+// })

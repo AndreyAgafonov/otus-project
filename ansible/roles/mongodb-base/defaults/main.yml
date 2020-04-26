@@ -1,2 +1,4 @@
 ---
 # defaults file for mongodb-base
+
+mongodb_daemon_bin: /usr/bin/mongod

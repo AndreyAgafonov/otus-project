@@ -1,6 +1,13 @@
 ---
 # tasks file for mongodb-base
 
+- name: Disable SELinux
+  selinux:
+    state: disabled
+
+- name: Disable Linux
+  command: setenforce 0
+
 - name: MONGODB-BASE |Add repository mongodb-4.0
   copy:
     src: files/mongodb-org-4.0.repo
@@ -14,7 +21,7 @@
 #    name: "{{ mongodb_user }}"
 #    comment: User for mongodb dataBase
 
-- name: MONGODB-BASE |Step 1 Disable Transparent Huge Pages (THP)
+- name: MONGODB-BASE |Step 1 of 2  Disable Transparent Huge Pages (THP)
   copy:
     src: files/disable-transparent-huge-pages.service
     dest: /etc/systemd/system/disable-transparent-huge-pages.service
@@ -22,7 +29,7 @@
     group: root
     mode: '0644'
 
-- name: MONGODB-BASE |Step 2 Disable Transparent Huge Pages (THP)
+- name: MONGODB-BASE |Step 2 of 2 Disable Transparent Huge Pages (THP)
   systemd:
     state: started
     daemon_reload: yes
@@ -48,43 +55,82 @@
     mode: '0755' # вероятно требуется пересмотреть права. чОт дохрена.
     force: yes
 
-- name: MONGODB-BASE |Step 1. Create a custom policy file
-  copy:
-    src: files/mongodb_cgroup_memory.te
-    dest: /tmp/mongodb_cgroup_memory.te
-    owner: root
-    group: root
-    mode: '0644'
+# - name: MONGODB-BASE |Step 1. Create a custom policy file
+#   copy:
+#     src: files/mongodb_cgroup_memory.te
+#     dest: /tmp/mongodb_cgroup_memory.te
+#     owner: root
+#     group: root
+#     mode: '0644'
 
-- name: MONGODB-BASE |Step 2. Once created, compile and load the custom policy module
-  command: cd /tmp && checkmodule -M -m -o mongodb_cgroup_memory.mod mongodb_cgroup_memory.te && semodule_package -o mongodb_cgroup_memory.pp -m mongodb_cgroup_memory.mod && semodule -i mongodb_cgroup_memory.pp
+# - name: MONGODB-BASE |Step 2. Once created, compile and load the custom policy module
+#   command: cd /tmp && checkmodule -M -m -o mongodb_cgroup_memory.mod mongodb_cgroup_memory.te && semodule_package -o mongodb_cgroup_memory.pp -m mongodb_cgroup_memory.mod && semodule -i mongodb_cgroup_memory.pp
 
-# mongodb_cgroup_memory.mod mongodb_cgroup_memory.te
-# semodule_package -o mongodb_cgroup_memory.pp -m mongodb_cgroup_memory.mod
-# semodule -i mongodb_cgroup_memory.pp
+# - name: MONGODB-BASE |Step 3. Update the SELinux policy to allow the mongod service to use the new directory
+#   command: semanage fcontext -a -t mongod_var_lib_t {{ mongodb_datadrive }}.*
 
-# - name: Allow apache to modify files in /srv/git_repos
-#   sefcontext:
-#     target: "{{ mongodb_datadrive }}(/.*)?"
-#     setype: httpd_git_rw_content_t
+# - name: MONGODB-BASE |Step 4. Update the SELinux user policy for the new directory
+#   command: chcon -Rv -u system_u -t mongod_var_lib_t {{ mongodb_datadrive }}
+
+# - name: MONGODB-BASE |Step 5. Apply the updated SELinux policies to the directory
+#   command: restorecon -R -v {{ mongodb_datadrive }}
+
+# - name: MONGODB-BASE |Step 6. Non-Default MongoDB Ports
+#   seport:
+#     ports: "{{ mongodb_port }}"
+#     proto: tcp
+#     setype: mongod_port_t
 #     state: present
 
-- name: MONGODB-BASE |Step 3. Update the SELinux policy to allow the mongod service to use the new directory
-  command: semanage fcontext -a -t mongod_var_lib_t {{ mongodb_datadrive }}.*
+- name: Cenfig SELinux
+  block:
+  - name: configure SELinux file contexts for mongodb
+    sefcontext:
+      target: "{{ item.target }}"
+      setype: "{{ item.setype }}"
+      reload: true
+      state: present
+    with_items:
+      - target: "{{ mongodb_daemon_bin }}"
+        setype: mongod_exec_t
+      - target: "{{ mongodb_datadrive }}(/.*)?"
+        setype: mongod_var_lib_t
+      - target: "{{ mongodb_pid | dirname }}(/.*)?"
+        setype: mongod_var_run_t
+    notify: start_mongodb
 
-- name: MONGODB-BASE |Step 4. Update the SELinux user policy for the new directory
-  command: chcon -Rv -u system_u -t mongod_var_lib_t {{ mongodb_datadrive }}
+  - name: ensure SELinux file contexts are applied
+    shell: restorecon -vr "{{ item }}"
+    with_items:
+      - "{{ mongodb_daemon_bin }}"
+      - "{{ mongodb_datadrive }}"
+      - "{{ mongodb_pid | dirname }}"
+    register: restorecon
+    changed_when: restorecon.stdout != ""
 
-- name: MONGODB-BASE |Step 5. Apply the updated SELinux policies to the directory
-  command: restorecon -R -v {{ mongodb_datadrive }}
+  - name: configure SELinux network ports for mongodb
+    seport:
+      ports: "{{ mongodb_port }}"
+      proto: tcp
+      setype: mongod_port_t
+      reload: true
+      state: present
+    notify: start_mongodb
+  when: ansible_selinux and ansible_selinux.status == "enabled"
 
-- name: MONGODB-BASE |Step 6. Non-Default MongoDB Ports
-  seport:
-    ports: "{{ mongodb_port }}"
-    proto: tcp
-    setype: mongod_port_t
-    state: present
-#   command: semanage port -a -t mongod_port_t -p tcp {{ mongodb_port }}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 - name: MONGODB-BASE |Allow port {{ mongodb_port }} in firewalld
   firewalld:
@@ -92,12 +138,6 @@
     permanent: yes
     state: enabled
 
-# - name: Disable SELinux
-#   selinux:
-#     state: disabled
-
-# - name: Disable Linux
-#   command: setenforce 0
 
 
 - name: MONGODB-BASE |Mongodb base config

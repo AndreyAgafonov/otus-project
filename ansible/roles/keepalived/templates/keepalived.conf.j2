@@ -6,13 +6,9 @@
 
 vrrp_instance VI_1 {
   interface {{ keepalive_interface }}
-  state MASTER
+  state {{ keepalive_state }}
   virtual_router_id {{ keepalive_virtual_router_id }}
-{% if ansible_hostname == groups.haproxy[0] %}
-  priority 100
-{% elif ansible_hostname == groups.haproxy[1] %}
-  priority 101
-{% endif %}
+  priority {{ keepalive_priority }}
   virtual_ipaddress {
     {{ keepalive_virtual_ipaddress }}
   }

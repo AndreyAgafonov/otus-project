@@ -1,7 +1,7 @@
 ---
 # tasks file for nginx
 
-- name: CER | elasticsearch, install python-setup-tools
+- name: CER | CER, install python-setup-tools
   yum:
     name: "{{ package }}"
     state: latest
@@ -18,7 +18,7 @@
     state: latest
     extra_args: --upgrade
 
-- name: CER | elasticsearch, install docker-compose for python
+- name: CER | CER, install docker-compose for python
   pip:
     name:
     - docker-compose
@@ -66,5 +66,5 @@
 #   with_items:
 #     - { src: docker-compose.yml.j2, dest: "{{ kibana_work_dir }}/docker-compose.yml" }
 
-- name: CER | Run Kibana in Docker Container ("{{ kibana_work_dir }}")1
+- name: CER | Run CER in Docker Container ("{{ kibana_work_dir }}")1
   command: "docker-compose -f /opt/docker-compose.yml up -d"

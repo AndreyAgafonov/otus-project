@@ -5,7 +5,7 @@
   - name: KIBANA | elasticsearch, set value vm.max_map_count (For production mode required)
     sysctl:
       name: vm.max_map_count
-      value: 262144
+      value: "{{ 262144 | string }}"
       sysctl_set: yes
       state: present
       reload: yes

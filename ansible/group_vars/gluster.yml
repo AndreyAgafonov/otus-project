@@ -9,7 +9,8 @@ gluster_cluster_hosts:
   - "{{ groups.gluster[1] }}"
 
 filebeat_index: filebeat-gluster
-filebeat_path_log: "{{ mongodb_log }}"
+filebeat_path_log:
+  - /var/log/glusterfs/*.log
 filebeat_app_name: gluster
 
 keepalive_virtual_ipaddress: 172.20.1.40

@@ -1,0 +1,14 @@
+use admin
+db.createUser( { user: "{{ mongodb_user_cer }}", pwd: "{{ mongodb_user_cer_pass }}",
+roles: [
+  { role: "clusterMonitor", db: "admin" },
+  { role: "readWrite", db: "{{ cer_db }}" }] } );
+
+
+db.createUser( { user: "{{ mongodb_user_backup }}", pwd: "{{ mongodb_user_backup_pass }}",
+roles: [
+  { role: "backup", db: "admin" },
+  { role: "read", db: "config" }
+  ]
+},
+  { w: "majority" , wtimeout: 5000 } );

@@ -29,10 +29,33 @@
 
 - name: MONGODB-SHARD |Init Shard cluster
   shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/initsh.js'
+  retries: 5
+  delay: 5
   when: (inventory_hostname in mongodb_router[0])
 
 
-#- name: MONGODB-SHARD |
+- name: MONGODB-SHARD | Template for sharding collections
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0777'
+  with_items:
+    - { src: createShardinDBs.js.j2 , dest: /tmp/createShardinDBs.js }
+    - { src: createUsers.js.j2 , dest: /tmp/createUsers.js }
+  when: (inventory_hostname in mongodb_router[0])
+
+- name: MONGODB-SHARD | Create users for CER
+  shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/createUsers.js'
+  retries: 5
+  delay: 5
+  when: (inventory_hostname in mongodb_router[0])
+
+- name: MONGODB-SHARD | Enable shardign DB
+  shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/createShardinDBs.js'
+  retries: 5
+  delay: 5
+  when: (inventory_hostname in mongodb_router[0])
+
 #- name: MONGODB-SHARD |
 #- name: MONGODB-SHARD |
 #- name: MONGODB-SHARD |

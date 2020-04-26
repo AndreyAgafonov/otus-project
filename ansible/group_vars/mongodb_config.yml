@@ -1,5 +1,5 @@
 mongodb_replicaset_name: config
 mongodb_database_user: admin
 mongodb_database_password: d3Csp3P
-mongodb_port: 27035
+mongodb_port: "{{ 27035 | string }}"
 mongodb_clusterRole: configsvr

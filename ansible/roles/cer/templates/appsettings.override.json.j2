@@ -1,0 +1,17 @@
+{
+  "MongoDb":
+      {
+      "ConnectionString": "mongodb://{{mongodb_user_cer}}:{{ mongodb_user_cer_pass }}@172.20.1.20,172.20.1.21,172.20.1.22/admin",
+      "Database": "{{ cer_db }}"
+      },
+  "OpenExchangeRateConnection": {
+    "ApplicationId": "ecb7d747488549cba2a11f03cb18ecc2"
+  },
+  "OpenExchangeRateMonitor": {
+    "MaxRequestsPerDay": "1"
+  },
+  "CurrencyExchangeRatesActualization": {
+    "WarrantyTime": "0:2:0"
+  }
+}
+

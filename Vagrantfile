@@ -164,19 +164,19 @@ MACHINES = {
     :box_name => "centos/7",
     :ip_addr => '172.20.1.20',
     :machine_cpu => '1',
-    :machine_memory => '386',
+    :machine_memory => '512',
     },
   :mdbfobos => {
     :box_name => "centos/7",
     :ip_addr => '172.20.1.21',
     :machine_cpu => '1',
-    :machine_memory => '386',
+    :machine_memory => '512',
     },
   :mdbgera => {
     :box_name => "centos/7",
     :ip_addr => '172.20.1.22',
     :machine_cpu => '1',
-    :machine_memory => '386',
+    :machine_memory => '512',
     },
   # :mdbdeimos => {
   #   :box_name => "centos/7",
@@ -190,19 +190,19 @@ MACHINES = {
     :box_name => "centos/7",
     :ip_addr => '172.20.1.24',
     :machine_cpu => '1',
-    :machine_memory => '386',
+    :machine_memory => '512',
     },
   :mdbgeya => {
     :box_name => "centos/7",
     :ip_addr => '172.20.1.25',
     :machine_cpu => '1',
-    :machine_memory => '386',
+    :machine_memory => '512',
     },
   :mdbclio => {
     :box_name => "centos/7",
     :ip_addr => '172.20.1.26',
     :machine_cpu => '1',
-    :machine_memory => '386',
+    :machine_memory => '512',
     },
   # :mdbnica => {
   #   :box_name => "centos/7",
@@ -216,20 +216,20 @@ MACHINES = {
     :box_name => "centos/7",
     :ip_addr => '172.20.1.29',
     :machine_cpu => '1',
-    :machine_memory => '386',
+    :machine_memory => '512',
     },
   :mdberida => {
     :box_name => "centos/7",
     :ip_addr => '172.20.1.28',
     :machine_cpu => '1',
-    :machine_memory => '386',
+    :machine_memory => '512',
     },
 
   :mdbeos => {
     :box_name => "centos/7",
     :ip_addr => '172.20.1.31',
     :machine_cpu => '1',
-    :machine_memory => '386',
+    :machine_memory => '512',
     },
 
   # :mdbgestia => {
