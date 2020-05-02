@@ -41,4 +41,10 @@
 - name:  PREPARE | Set hostname
   hostname:
     name: "{{ inventory_hostname }}"
+
+- name:  PREPARE |  Check  Firewalld  is Enabled and started
+  systemd:
+    name: firewalld
+    state: started
+    enabled: true
 ...

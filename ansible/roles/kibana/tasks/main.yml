@@ -10,11 +10,6 @@
       state: present
       reload: yes
 
-  # - name:  KIBANA |Put SELinux in permissive mode
-  #   selinux:
-  #     policy: targeted
-  #     state: permissive
-
   - name: KIBANA | elasticsearch, install python-setup-tools
     yum:
       name:
@@ -87,8 +82,24 @@
   #   #register: output
   #   tags:
   #     - docker-copmose
+  - name: KIBANA | add service to allow for firewalld
+    firewalld:
+      service: docker
+      permanent: yes
+      state: enabled
 
-  - name: Check container elasticsearch status (GET) ant return 200 code
+  - name: KIBANA | add port to allow for firewalld
+    firewalld:
+      port: "{{ item }}"
+      permanent: yes
+      state: enabled
+    loop:
+      - "{{ elasticsearch_port_mgmt }}/tcp"
+      - "{{ elasticsearch_port }}/tcp"
+      - "{{ kibana_port }}/tcp"
+      - "{{ logstash_bits_port }}/tcp"
+
+  - name: KIBANA | Check container elasticsearch status (GET) ant return 200 code
     uri:
       url: http://127.0.0.1:{{ elasticsearch_port }}/_cat/health
       method: GET
@@ -99,7 +110,7 @@
     tags:
       - health check
 
-  - name: Check container kibana status (GET) ant return 200 code
+  - name: KIBANA | Check container kibana status (GET) ant return 200 code
     uri:
       url: http://127.0.0.1:{{ kibana_port }}
       method: GET
@@ -109,21 +120,5 @@
     delay: 5
     tags:
       - health check
-
-  # - name: Create index pattern
-  #   uri:
-  #     url: 'http://127.0.0.1:{{ kibana_port }}/.kibana/index-pattern/events-* -d `{ "title" : "events-*",  "timeFieldName": "EventTime" }`'
-  #     method: PUT
-  #   register: result
-  #   until: result.status == 200
-  #   retries: 60
-  #   delay: 5
-  #   tags:
-  #     - Create index pattern
-
-
-
-  #curl -XPUT http://<es node>:9200/.kibana/index-pattern/events-* -d '{"title" : "events-*",  "timeFieldName": "EventTime"}'
-
 
   when: ansible_facts['distribution'] == 'CentOS'

@@ -5,10 +5,11 @@
   service:
     name: keepalived
     state: started
+    daemon_reload: yes
 
 - name: restart keepalived
   service:
     name: keepalived
     state: restarted
     enabled: yes
-
+    daemon_reload: yes

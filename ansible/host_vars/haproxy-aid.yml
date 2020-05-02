@@ -1,3 +1,4 @@
-keepalive_virtual_router_id: 2
+keepalive_virtual_router_id: 200
 keepalive_priority: 100
-keepalive_state: SLAVE
+keepalive_state: BACKUP
+keepalive_pass: YhSAMz

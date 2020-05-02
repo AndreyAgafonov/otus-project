@@ -8,7 +8,8 @@ mongodb_masters:
   - "{{ groups.mongodb_shard2[0] }}"
 
 mongodb_log: /var/log/mongodb/mongod.log
-mongodb_pid: /var/run/mongodb/mongod.pid
+mongodb_conf_pidFile: /var/run/mongodb
+mongodb_pid: "{{ mongodb_conf_pidFile }}/mongod.pid"
 filebeat_path_log: "{{ mongodb_log }}"
 filebeat_index: filebeat-mongodb
 filebeat_app_name: mongodb

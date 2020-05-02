@@ -1,5 +1,10 @@
 ---
 # tasks file for mongodb shard
+- name: MONGODB-ROUTER |Allow port {{ mongodb_router_port }} in firewalld
+  firewalld:
+    port: "{{ mongodb_port }}/tcp"
+    permanent: yes
+    state: enabled
 
 - name: MONGODB-ROUTER|Install mongos v{{ mongodb_version }}
   yum:

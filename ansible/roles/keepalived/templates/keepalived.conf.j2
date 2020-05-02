@@ -1,10 +1,4 @@
-#vrrp_script chk_haproxy {
-#  script "killall -0 haproxy"
-#  interval 2
-#  weight 2
-#}
-
-vrrp_instance VI_1 {
+vrrp_instance {{ group_names[0] }} {
   interface {{ keepalive_interface }}
   state {{ keepalive_state }}
   virtual_router_id {{ keepalive_virtual_router_id }}
@@ -12,7 +6,8 @@ vrrp_instance VI_1 {
   virtual_ipaddress {
     {{ keepalive_virtual_ipaddress }}
   }
-  #track_script {
-  #  chk_haproxy
-  #}
+  authentication {
+        auth_type PASS
+        auth_pass {{ keepalive_pass }}
+  }
 }

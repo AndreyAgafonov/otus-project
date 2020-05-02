@@ -23,23 +23,19 @@
     name:
     - docker-compose
 
+- name: CER | add port to allow for firewalld
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  loop:
+    - "{{ cer_port }}/tcp"
+
+
 # - name: CER | Create a network
 #   docker_network:
 #     name: globalnetwork
 
-# - name: CER | elasticsearch, Create work directory for elasticsearch {{ elasticsearch_data }}
-#   file:
-#     path: "{{ item.path }}"
-#     state: directory
-#     owner: vagrant
-#     group: root
-#     mode: '0744'
-#   with_items:
-#     - { path: "{{ elasticsearch_data }}" }
-#     - { path: "{{ logstash_work_dir }}" }
-#     - { path: "{{ logstash_conf_dir }}" }
-#     - { path: "{{ logstash_data }}" }
-#     - { path: "{{ kibana_work_dir }}" }
 
 #=====
 - name: CER | delivery config files
@@ -68,3 +64,14 @@
 
 - name: CER | Run CER in Docker Container ("{{ kibana_work_dir }}")1
   command: "docker-compose -f /opt/docker-compose.yml up -d"
+
+- name: CER | Check CER is running
+  uri:
+    url: http://127.0.0.1:{{ cer_port }}/api/server/info
+    method: GET
+  register: result
+  until: result.status == 200
+  retries: 60
+  delay: 5
+  tags:
+    - health check

@@ -1,24 +1,24 @@
 ---
 # tasks file for provision/roles/nc-haproxy
 
-- name: install IUS repo
+- name: HAPROXY | install IUS repo
   yum:
     name: https://repo.ius.io/ius-release-el7.rpm
     state: present
 
-- name: install haproxy
+- name: HAPROXY | install haproxy
   yum:
     name: haproxy20
     state: present
 
-- name: deploy haproxy config
+- name: HAPROXY | deploy haproxy config
   template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
     validate: /usr/sbin/haproxy -c -f %s
   notify: restart haproxy
 
-- name: Logging config step 1
+- name: HAPROXY | Logging config step 1
   lineinfile:
       path: /etc/rsyslog.conf
       regexp: "{{ item.regexp }}"
@@ -29,7 +29,7 @@
     - { regexp: '^#$UDPServerRun 514' , line: '$UDPServerRun 514' }
     - { regexp: '^#$InputTCPServerRun 514' , line: '$InputTCPServerRun 514' }
 
-- name: Logging config step 2
+- name: HAPROXY | Logging config step 2
   lineinfile:
       path: "{{ item.path }}"
       regexp: "{{ item.regexp }}"
@@ -37,7 +37,7 @@
   with_items:
     - { path: /etc/sysconfig/rsyslog , regexp: '^SYSLOGD_OPTIONS=' , line: 'SYSLOGD_OPTIONS="-c 2 -r"' }
 
-- name: Logging config step 3
+- name: HAPROXY | Logging config step 3
   template:
     src: rsyslog.conf.j2
     dest: /etc/rsyslog.d/haproxy.conf

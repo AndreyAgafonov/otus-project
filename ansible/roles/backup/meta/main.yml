@@ -1,7 +1,7 @@
 galaxy_info:
   author: Agafonov Andrey
   description: Prepare backup
-  company: cloud16.ru
+  company:  "cloud16.ru"
   min_ansible_version: 2.9
   galaxy_tags:
     - backup

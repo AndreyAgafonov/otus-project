@@ -19,6 +19,6 @@
  172.20.1.40		gluster-ares
  172.20.1.41		gluster-erot
  172.20.1.42		gluster-gefest
- 172.20.1.220		zabbix-poseidon
+ 172.20.1.220		prometheus-poseydon
  172.20.1.210		kibana-plutos
  172.20.1.200		tartarus

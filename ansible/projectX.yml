@@ -1,10 +1,10 @@
 ---
-# - name: install mongod
-#   hosts: mongodb
-#   become: true
-#   gather_facts: yes
-#   roles:
-#     - mongodb-sh
+- name: Deploy shared MongoDB Cluster
+  hosts: mongodb
+  become: true
+  gather_facts: yes
+  roles:
+    - mongodb-sh
 
 - name: Deploy GlusterFS nodes
   hosts: gluster
@@ -20,31 +20,31 @@
     - keepalived
     - haproxy
 
-# - name: Deploy cer
-#   hosts: cer
-#   become: yes
-#   roles:
-#     - cer
+- name: Deploy cer
+  hosts: cer
+  become: yes
+  roles:
+    - cer
 
-# - name: Deploy monitoring and logging tools
-#   hosts:
-#     - mongodb
-#     - haproxy
-#     - gluster
-#     - cer
-#   become: yes
-#   roles:
-#     - filebeat
+- name: Deploy monitoring and logging tools
+  hosts:
+    - mongodb
+    - haproxy
+    - gluster
+    - cer
+  become: yes
+  roles:
+    - filebeat
 
-# - name: Deploy Kibana
-#   hosts: kibana
-#   become: yes
-#   roles:
-#     - kibana
+- name: Deploy Kibana
+  hosts: kibana
+  become: yes
+  roles:
+    - kibana
 
-# - name: backup
-#   hosts: backup
-#   become: yes
-#   roles:
-#     - backup
+- name: backup
+  hosts: backup
+  become: yes
+  roles:
+    - backup
 

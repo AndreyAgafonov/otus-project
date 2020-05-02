@@ -1,36 +1,36 @@
 ---
 
-# - name: create a new partition /dev/sdb1
+# - name: GLUSTER-SERVER | create a new partition /dev/sdb1
 #   parted:
 #     device: /dev/sdb
 #     number: 1
 #     state: present
 
-# - name: create xfs filesystem on /dev/sdb1
+# - name: GLUSTER-SERVER | create xfs filesystem on /dev/sdb1
 #   filesystem:
 #     fstype: xfs
 #     dev: /dev/sdb1
 #     opts: -i size=512
-- name: Ansible check directory exists example.
+- name: GLUSTER-SERVER | Ansible check directory exists example.
   stat:
     path: "{{ gluster_brick_dir }}"
   register: check_dir
 
-- name: create directory
+- name: GLUSTER-SERVER | create directory
   file:
     path: "{{ gluster_brick_dir }}"
     state: directory
     recurse: yes
   when: check_dir.stat.exists == false
 
-# - name: mount /dev/sdb1
+# - name: GLUSTER-SERVER | mount /dev/sdb1
 #   mount:
 #     path: "{{ gluster_brick_dir }}"
 #     src: /dev/sdb1
 #     fstype: xfs
 #     state: mounted
 
-- name: create brick directory
+- name: GLUSTER-SERVER | create brick directory
   file:
     path: "{{ gluster_brick_vol }}"
     state: directory

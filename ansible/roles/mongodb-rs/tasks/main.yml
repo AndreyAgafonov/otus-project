@@ -36,16 +36,6 @@
   # notify:
   #   - restart_mongodb
 
-# - name: MONGODB-REPLICASET | Configuring for sharding
-#   replace:
-#     path: /etc/mongod.conf
-#     regexp: "{{ item.regexp }}"
-#     replace: "{{ item.replace }}"
-#   with_items:
-#     - { regexp: '#sharding:', replace: 'sharding:' }
-#     - { regexp: '#  clusterRole: configsvr', replace: '  clusterRole: {{ mongodb_clusterRole }}' }
-#   when: (inventory_hostname in mongodb_router)
-
 - name: MONGODB-REPLICASET | restart_mongodb
   systemd:
     name: mongod
@@ -54,45 +44,6 @@
 
     #name: pymongo
     #state: present
-
-#- name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
-#  mongodb_replicaset:
-#    login_host: localhost
-#    login_user: "{{ mongodb_database_user }}"
-#    login_password: "{{ mongodb_database_password }}"
-#    replica_set: "{{ mongodb_replicaset_name }}"
-#    members:
-#    - "groups.mongodb_config.index[0]:{{ mongodb_port }}"
-#    - "groups.mongodb_config.index[1]:{{ mongodb_port }}"
-#    - "groups.mongodb_config.index[2]:{{ mongodb_port }}"
-#    - "groups.mongodb_config.index[3]:{{ mongodb_port }}"
-#  when: (groups.mongodb_config.index(inventory_hostname) == 0)
-
-#- name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
-#  mongodb_replicaset:
-#    login_host: localhost
-#    login_user: "{{ mongodb_database_user }}"
-#    login_password: "{{ mongodb_database_password }}"
-#    replica_set: "{{ mongodb_replicaset_name }}"
-#    members:
-#    - "groups.mongodb_shard1.index[0]:{{ mongodb_port }}"
-#    - "groups.mongodb_shard1.index[1]:{{ mongodb_port }}"
-#    - "groups.mongodb_shard1.index[2]:{{ mongodb_port }}"
-#    - "groups.mongodb_shard1.index[3]:{{ mongodb_port }}"
-#  when: (groups.mongodb_shard1.index(inventory_hostname) == 0)
-
-# - name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
-#   template:
-#     src: initrs.js.j2
-#     dest: /tmp/initrs.js
-#   when:  (groups.mongodb_config.index(inventory_hostname) == 0)
-
-
-# - name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
-#   template:
-#     src: initrs.js.j2
-#     dest: /tmp/initrs.js
-#   when:  (groups.mongodb_shard1.index(inventory_hostname) == 0)
 
 - name: MONGODB-REPLICASET |Config Replica set {{ mongodb_replicaset_name }}
   template:
@@ -105,23 +56,9 @@
   shell: 'mongo --host localhost --port {{ mongodb_port }}  </tmp/initrs.js'
   when:  (inventory_hostname in mongodb_masters)
 
-# - name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
-#   shell: 'mongo --host localhost --port {{ mongodb_port }}  </tmp/initrs.js'
-#   when: (groups.mongodb_shard1.index(inventory_hostname) == 0)
-
-# - name: MONGODB-REPLICASET |Init Replica set {{ mongodb_replicaset_name }}
-#   shell: 'mongo --host localhost --port {{ mongodb_port }}  </tmp/initrs.js'
-#   when: (groups.mongodb_shard2.index(inventory_hostname) == 0)
-
-# - name: MONGODB-REPLICASET | restart_mongodb
-#   systemd:
-#     name: mongod
-#     enabled: yes
-#     state: restarted
-
 - name: MONGODB-REPLICASET | Pause reaplica set make voting
   pause:
-    seconds: 20
+    seconds: 30
 
 - name: MONGODB-REPLICASET | Check ReplicaSet is master
   command: echo "rs.status().members[0].stateStr" | mongo  --port {{ mongodb_port }} --quiet

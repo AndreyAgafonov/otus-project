@@ -13,77 +13,6 @@
 # @mailto: aagafonov@inbox.ru
 #
 
-#dns:
-#hosts:
-#  dns-germes:
-#    ansible_host: 172.20.1.5
-
-#haproxy:
-#hosts:
-#  haproxy-zefs:
-#    ansible_host: 172.20.1.10
-#  haproxy-aid:
-#    ansible_host: 172.20.1.11
-
-#cer:
-#hosts:
-#  cer-appolo:
-#    ansible_host: 172.20.1.15
-#  cer-dionis:
-#    ansible_host: 172.20.1.16
-#  cer-morphius:
-#    ansible_host: 172.20.1.17
-
-#mongodb-config:
-#hosts:
-#  mdb-afina:
-#    ansible_host: 172.20.1.20
-#  mdb-fobos:
-#    ansible_host: 172.20.1.21
-#  mdb-gera:
-#    ansible_host: 172.20.1.22
-#  mdb-deimos:
-#    ansible_host: 172.20.1.23
-
-#mongodb-shard1:
-#hosts:
-#  mdb-afrodita:
-#    ansible_host: 172.20.1.24
-#  mdb-geya:
-#    ansible_host: 172.20.1.25
-#  mdb-clio:
-#    ansible_host: 172.20.1.26
-#  mdb-nica:
-#    ansible_host: 172.20.1.27
-
-
-
-
-#gluster:
-#hosts:
-#  gluster-ares:
-#    ansible_host: 172.20.1.40
-#  gluster-erot:
-#    ansible_host: 172.20.1.41
-#  gluster-gefest:
-#    ansible_host: 172.20.1.42
-
-
-#zabbix:
-#hosts:
-#  zabbix-poseidon:
-#    ansible_host: 172.20.1.220
-#kibana:
-#hosts:
-#  kibana-plutos:
-#    ansible_host: 172.20.1.210
-
-#nfsServer:
-#hosts:
-#  nfs-server1:
-#    ansible_host: 172.20.1.200
-
-
 # Определяем список машин ддя развертывания
 MACHINES = {
 
@@ -142,22 +71,6 @@ MACHINES = {
     :machine_cpu => '1',
     :machine_memory => '512',
     },
-
-  # :glustergefest => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.42',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '256',
-  #   },
-
-
-###NFS Server
-  # :tartarus => {
-  #   :box_name => "centos/7",
-  #   :ip_addr => '172.20.1.200',
-  #   :machine_cpu => '1',
-  #   :machine_memory => '256',
-  #   },
 
 ###config
   :mdbafina => {
@@ -239,12 +152,12 @@ MACHINES = {
   #   :machine_memory => '386',
   # },
 
-  :prometheusposeydon => {
-    :box_name => "centos/7",
-    :ip_addr => '172.20.1.220',
-    :machine_cpu => '1',
-    :machine_memory => '512',
-  },
+#   :prometheusposeydon => {
+#     :box_name => "centos/7",
+#     :ip_addr => '172.20.1.220',
+#     :machine_cpu => '1',
+#     :machine_memory => '512',
+#   },
 
 
   ###################################
@@ -252,7 +165,7 @@ MACHINES = {
         :box_name => "centos/7",
         :ip_addr => '172.20.1.250',
         :machine_cpu => '1',
-        :machine_memory => '386',
+        :machine_memory => '512',
   }
 }
 
@@ -278,34 +191,6 @@ Vagrant.configure("2") do |config|
         SHELL
 
         case boxname.to_s
-        #переменные для окружения виртуалки
-        #provision_path = './' + boxname.to_s
-        #provision_script = provision_path +  '/provision.sh'
-        #provision_work_dir= '/vagrant/' + boxname.to_s
-        #provision_box_name= boxname.to_s
-        #MACHINES.each do |boxname, boxconfig|
-        #provision_machines= MACHINES
-        #end
-        #персональный провижн для каждой
-        # when "glusterares"
-        #   box.vm.provider :virtualbox do |box|
-        #     second_disk = boxname.to_s + '-disk2.vdi'
-        #     if not File.exists?(second_disk)
-        #       box.customize ['createhd', '--filename', second_disk, '--format', 'VDI', '--size', 10 * 1024]
-        #       box.customize ['storagectl', :id, '--name', 'SATA Controller', '--add', 'sata', '--portcount', 2]
-        #     end
-        #     box.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', second_disk]
-        #   end
-        # when "glustererot"
-        #   box.vm.provider :virtualbox do |box|
-        #     second_disk = boxname.to_s + '-disk2.vdi'
-        #     if not File.exists?(second_disk)
-        #       box.customize ['createhd', '--filename', second_disk, '--format', 'VDI', '--size', 10 * 1024]
-        #       box.customize ['storagectl', :id, '--name', 'SATA Controller', '--add', 'sata', '--portcount', 2]
-        #     end
-        #     box.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', second_disk]
-        #   end
-
         when "ansible"
           provision_path = './' + boxname.to_s
           provision_script = provision_path +  '/provision.sh'
@@ -315,12 +200,6 @@ Vagrant.configure("2") do |config|
             bash -x /vagrant/ansible/provision.sh
           SHELL
         end
-        #box.vm.provision "shell", path: provision_script,
-        #  env: {
-        #      "vagrant_box_name" => provision_box_name,
-        #      "vagrant_work_dir" => provision_work_dir,
-              #"vagrant_machines" => provision_machines
-        #  }
     end
   end
 end

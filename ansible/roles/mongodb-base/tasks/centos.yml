@@ -1,12 +1,14 @@
 ---
 # tasks file for mongodb-base
+############################################################
+# - name: Disable SELinux
+#   selinux:
+#     policy: targeted
+#     state: enforcing
 
-- name: Disable SELinux
-  selinux:
-    state: disabled
-
-- name: Disable Linux
-  command: setenforce 0
+# - name: Disable Linux
+#   command: setenforce 1
+############################################################
 
 - name: MONGODB-BASE |Add repository mongodb-4.0
   copy:
@@ -52,9 +54,61 @@
     state: directory
     owner: "{{ mongodb_user }}"
     group: "{{ mongodb_user }}"
-    mode: '0755' # вероятно требуется пересмотреть права. чОт дохрена.
+    mode: '0755'
     force: yes
 
+
+- name: MONGODB-BASE |Config SELinux
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: '0644'
+  with_items:
+    - { src: files/local.pp , dest: /tmp/local.pp }
+    - { src: files/local.te , dest: /tmp/local.te }
+
+- name: MONGODB-BASE | Config SELInix
+  command: semodule -i /tmp/local.pp
+  #chdir: /tmp
+
+- block:
+  - name: configure SELinux file contexts for mongodb
+    sefcontext:
+      target: "{{ item.target }}"
+      setype: "{{ item.setype }}"
+      reload: true
+      state: present
+    with_items:
+      - target: "{{ mongodb_daemon_bin }}"
+        setype: mongod_exec_t
+      - target: "{{ mongodb_datadrive }}(/.*)?"
+        setype: mongod_var_lib_t
+      - target: "{{ mongodb_conf_pidFile | dirname }}(/.*)?"
+        setype: mongod_var_run_t
+    notify: restart_mongodb
+
+  - name: ensure SELinux file contexts are applied
+    shell: restorecon -vr "{{ item }}"
+    with_items:
+      - "{{ mongodb_daemon_bin }}"
+      - "{{ mongodb_datadrive }}"
+      - "{{ mongodb_conf_pidFile | dirname }}"
+    register: restorecon
+    changed_when: restorecon.stdout != ""
+
+  - name: configure SELinux network ports for mongodb
+    seport:
+      ports: "{{ mongodb_port }}"
+      proto: tcp
+      setype: mongod_port_t
+      reload: true
+      state: present
+    notify: restart_mongodb
+  when: ansible_selinux and ansible_selinux.status == "enabled"
+
+#######################################
 # - name: MONGODB-BASE |Step 1. Create a custom policy file
 #   copy:
 #     src: files/mongodb_cgroup_memory.te
@@ -81,45 +135,43 @@
 #     proto: tcp
 #     setype: mongod_port_t
 #     state: present
+####################################
 
-- name: Cenfig SELinux
-  block:
-  - name: configure SELinux file contexts for mongodb
-    sefcontext:
-      target: "{{ item.target }}"
-      setype: "{{ item.setype }}"
-      reload: true
-      state: present
-    with_items:
-      - target: "{{ mongodb_daemon_bin }}"
-        setype: mongod_exec_t
-      - target: "{{ mongodb_datadrive }}(/.*)?"
-        setype: mongod_var_lib_t
-      - target: "{{ mongodb_pid | dirname }}(/.*)?"
-        setype: mongod_var_run_t
-    notify: start_mongodb
+# - name: Cenfig SELinux
+#   block:
+#   - name: configure SELinux file contexts for mongodb
+#     sefcontext:
+#       target: "{{ item.target }}"
+#       setype: "{{ item.setype }}"
+#       reload: true
+#       state: present
+#     with_items:
+#       - target: "{{ mongodb_daemon_bin }}"
+#         setype: mongod_exec_t
+#       - target: "{{ mongodb_datadrive }}(/.*)?"
+#         setype: mongod_var_lib_t
+#       - target: "{{ mongodb_pid | dirname }}(/.*)?"
+#         setype: mongod_var_run_t
+#     notify: start_mongodb
 
-  - name: ensure SELinux file contexts are applied
-    shell: restorecon -vr "{{ item }}"
-    with_items:
-      - "{{ mongodb_daemon_bin }}"
-      - "{{ mongodb_datadrive }}"
-      - "{{ mongodb_pid | dirname }}"
-    register: restorecon
-    changed_when: restorecon.stdout != ""
+#   - name: ensure SELinux file contexts are applied
+#     shell: restorecon -vr "{{ item }}"
+#     with_items:
+#       - "{{ mongodb_daemon_bin }}"
+#       - "{{ mongodb_datadrive }}"
+#       - "{{ mongodb_pid | dirname }}"
+#     register: restorecon
+#     changed_when: restorecon.stdout != ""
 
-  - name: configure SELinux network ports for mongodb
-    seport:
-      ports: "{{ mongodb_port }}"
-      proto: tcp
-      setype: mongod_port_t
-      reload: true
-      state: present
-    notify: start_mongodb
-  when: ansible_selinux and ansible_selinux.status == "enabled"
-
-
-
+#   - name: configure SELinux network ports for mongodb
+#     seport:
+#       ports: "{{ mongodb_port }}"
+#       proto: tcp
+#       setype: mongod_port_t
+#       reload: true
+#       state: present
+#     notify: start_mongodb
+#   when: ansible_selinux and ansible_selinux.status == "enabled"
 
 
 
@@ -130,6 +182,17 @@
 
 
 
+
+
+
+
+
+
+- name: MONGODB-BASE |Allow service mongodb in firewalld
+  firewalld:
+    service: mongodb
+    permanent: yes
+    state: enabled
 
 
 - name: MONGODB-BASE |Allow port {{ mongodb_port }} in firewalld

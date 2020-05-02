@@ -1,13 +1,13 @@
 ---
-- name: prepare disk
+- name: GLUSTER-SERVER | prepare disk
   include: part.yml
 
-- name: add gluster repo
+- name: GLUSTER-SERVER | add gluster repo
   yum:
     name: centos-release-gluster
     state: present
 
-- name: Update ssh config
+- name: GLUSTER-SERVER | Update ssh config
   blockinfile:
     path: /home/vagrant/.ssh/config
     owner: vagrant
@@ -18,7 +18,7 @@
     state: present
     create: true
 
-- name: Create cluster nodes file
+- name: GLUSTER-SERVER | Create cluster nodes file
   lineinfile:
     dest:  /home/vagrant/nodes
     regexp: '.*{{ hostvars[item].ansible_facts.hostname }}$'
@@ -27,7 +27,7 @@
     create: true
   loop: "{{ ansible_play_batch }}"
 
-- name: install GlusterFS
+- name: GLUSTER-SERVER | install GlusterFS
   yum:
     name:
       - glusterfs-server
@@ -36,19 +36,19 @@
   notify: start_glusterd
 
 
-- name: Ensure Gluster brick and mount directories exist.
+- name: GLUSTER-SERVER | Ensure Gluster brick and mount directories exist.
   file: "path={{ item }} state=directory mode=0775"
   with_items:
     - "{{ gluster_brick_dir }}"
     - "{{ gluster_mount_dir }}"
 
-- name: start_glusterd
+- name: GLUSTER-SERVER | start_glusterd
   systemd:
     name: glusterd
     state: started
     enabled: yes
 
-- name: create gluster cluster
+- name: GLUSTER-SERVER | create gluster cluster
   gluster_volume:
         state: "present"
         name: "{{ gluster_brick_name }}"
@@ -68,13 +68,24 @@
   run_once: true
   when: (inventory_hostname in gluster_cluster_hosts[0])
 
-- name: set up firewall
+- name: GLUSTER-SERVER | set up firewall
   firewalld:
     service: glusterfs
     permanent: true
     state: enabled
 
-- name: Ensure Gluster volume is mounted.
+
+# - name: Configure SELinux for Gluster step 1 of 2
+#   command: semanage fcontext -a -t glusterd_brick_t "/datadrive(/.*)?"
+
+# - name: Configure SELinux for Gluster step 1 of 2
+#   command: semanage fcontext -C -l
+
+# - name: Configure SELinux for Gluster step 1 of 2
+#   command: restorecon -Rv /datadrive
+
+
+- name: GLUSTER-SERVER | Ensure Gluster volume is mounted.
   mount:
     name: "{{ gluster_mount_dir }}"
     src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
