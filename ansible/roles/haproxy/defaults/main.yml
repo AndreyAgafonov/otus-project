@@ -5,4 +5,5 @@
 # password: 'statpass'
 
 haproxy_port: 80
+haproxy_monitoring_port: 8080
 #haproxy_log_path: /var/log/haproxy.log

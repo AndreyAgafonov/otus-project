@@ -1,5 +1,20 @@
 ---
 # tasks file for provision/roles/nc-haproxy
+- name: Allow port {{ haproxy_port }} in firewalld
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: yes
+    state: enabled
+  loop:
+    - "{{ haproxy_port }}"
+    - "{{ haproxy_monitoring_port }}"
+
+
+- name: restart_firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: restarted
 
 - name: HAPROXY | install IUS repo
   yum:

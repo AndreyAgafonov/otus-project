@@ -1,6 +1,4 @@
-keepalive_interface: eth1
 keepalive_virtual_router_id: 101
 keepalive_priority: 101
-# keepalive_virtual_ipaddress: 172.20.1.40
 keepalive_state: MASTER
 keepalive_pass: gCg3rsd

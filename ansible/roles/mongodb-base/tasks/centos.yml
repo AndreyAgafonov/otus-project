@@ -10,18 +10,94 @@
 #   command: setenforce 1
 ############################################################
 
-- name: MONGODB-BASE |Add repository mongodb-4.0
+
+- name: MONGODB-BASE | Create user for mongodb
+  user:
+   name: "{{ mongodb_user }}"
+   comment: User for mongodb dataBase
+
+- name: MONGODB-BASE |Create dir for data
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ mongodb_user }}"
+    group: "{{ mongodb_user }}"
+    mode: '0755'
+    force: yes
+  loop:
+    - "{{ mongodb_datadrive }}"
+    - "{{ mongodb_log_path }}"
+    - "{{ mongodb_conf_pidFile }}"
+
+#######################################
+- name: MONGODB-BASE |Step 1. Create a custom policy file mongodb_cgroup_memory.te
   copy:
-    src: files/mongodb-org-4.0.repo
-    dest: /etc/yum.repos.d/mongodb-org-4.0.repo
+    src: files/mongodb_cgroup_memory.te
+    dest: /tmp/mongodb_cgroup_memory.te
     owner: root
     group: root
     mode: '0644'
 
-#- name: MONGODB-BASE | Create user for mongodb
-#  user:
-#    name: "{{ mongodb_user }}"
-#    comment: User for mongodb dataBase
+- name: MONGODB-BASE |Step 2. Once created, compile and load the custom policy module
+  command: "{{ item }}"
+  args:
+    chdir: /tmp
+  loop:
+    - checkmodule -M -m -o mongodb_cgroup_memory.mod mongodb_cgroup_memory.te
+    - semodule_package -o mongodb_cgroup_memory.pp -m mongodb_cgroup_memory.mod
+    - semodule -i mongodb_cgroup_memory.pp
+
+- name: MONGODB-BASE |Step 3. Update the SELinux policy to allow the mongod service to use the new directory
+  command: semanage fcontext -a -t {{ item }}
+  loop:
+    - mongod_var_lib_t {{ mongodb_datadrive }}(/.*)?
+    - mongod_log_t {{ mongodb_log_path }}(/.*)?
+    - mongod_var_run_t {{ mongodb_conf_pidFile }}(/.*)?
+
+
+- name: MONGODB-BASE |Step 4. Update the SELinux user policy for the new directory
+  command: chcon -Rv -u system_u -t {{ item }}
+  loop:
+    - mongod_var_lib_t {{ mongodb_datadrive }}
+    - mongod_log_t {{ mongodb_log_path }}
+    - mongod_var_run_t {{ mongodb_conf_pidFile }}
+
+- name: MONGODB-BASE |Step 5. Apply the updated SELinux policies to the directory
+  command: restorecon -R -v {{ item }}
+  loop:
+    - "{{ mongodb_datadrive }}"
+    - "{{ mongodb_log_path }}"
+    - "{{ mongodb_conf_pidFile }}"
+
+- name: MONGODB-BASE |Step 6. Non-Default MongoDB Ports
+  seport:
+    ports: "{{ mongodb_port }}"
+    proto: tcp
+    setype: mongod_port_t
+    state: present
+
+
+- name: MONGODB-BASE |Allow service mongodb in firewalld
+  firewalld:
+    service: mongodb
+    permanent: yes
+    state: enabled
+  notify: restart_firewalld
+
+- name: MONGODB-BASE |Allow port {{ mongodb_port }} in firewalld
+  firewalld:
+    port: "{{ mongodb_port }}/tcp"
+    permanent: yes
+    state: enabled
+  notify: restart_firewalld
+
+- name: MONGODB-BASE |restart_firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: restarted
+
+####################################
 
 - name: MONGODB-BASE |Step 1 of 2  Disable Transparent Huge Pages (THP)
   copy:
@@ -38,6 +114,14 @@
     enabled: yes
     name: disable-transparent-huge-pages.service
 
+- name: MONGODB-BASE |Add repository mongodb-4.0
+  copy:
+    src: files/mongodb-org-4.0.repo
+    dest: /etc/yum.repos.d/mongodb-org-4.0.repo
+    owner: root
+    group: root
+    mode: '0644'
+
 - name: MONGODB-BASE |Install mongodb {{ mongodb_version }}
   yum:
     name: "{{ packages }}"
@@ -48,94 +132,57 @@
     - mongodb-org-shell-{{ mongodb_version }}
     - mongodb-org-tools-{{ mongodb_version }}
 
-- name: MONGODB-BASE |Create dir for data
-  file:
-    path: "{{ mongodb_datadrive }}"
-    state: directory
-    owner: "{{ mongodb_user }}"
-    group: "{{ mongodb_user }}"
-    mode: '0755'
-    force: yes
 
-
-- name: MONGODB-BASE |Config SELinux
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    owner: root
-    group: root
-    mode: '0644'
-  with_items:
-    - { src: files/local.pp , dest: /tmp/local.pp }
-    - { src: files/local.te , dest: /tmp/local.te }
-
-- name: MONGODB-BASE | Config SELInix
-  command: semodule -i /tmp/local.pp
-  #chdir: /tmp
-
-- block:
-  - name: configure SELinux file contexts for mongodb
-    sefcontext:
-      target: "{{ item.target }}"
-      setype: "{{ item.setype }}"
-      reload: true
-      state: present
-    with_items:
-      - target: "{{ mongodb_daemon_bin }}"
-        setype: mongod_exec_t
-      - target: "{{ mongodb_datadrive }}(/.*)?"
-        setype: mongod_var_lib_t
-      - target: "{{ mongodb_conf_pidFile | dirname }}(/.*)?"
-        setype: mongod_var_run_t
-    notify: restart_mongodb
-
-  - name: ensure SELinux file contexts are applied
-    shell: restorecon -vr "{{ item }}"
-    with_items:
-      - "{{ mongodb_daemon_bin }}"
-      - "{{ mongodb_datadrive }}"
-      - "{{ mongodb_conf_pidFile | dirname }}"
-    register: restorecon
-    changed_when: restorecon.stdout != ""
-
-  - name: configure SELinux network ports for mongodb
-    seport:
-      ports: "{{ mongodb_port }}"
-      proto: tcp
-      setype: mongod_port_t
-      reload: true
-      state: present
-    notify: restart_mongodb
-  when: ansible_selinux and ansible_selinux.status == "enabled"
-
-#######################################
-# - name: MONGODB-BASE |Step 1. Create a custom policy file
+# - name: MONGODB-BASE |Config SELinux
 #   copy:
-#     src: files/mongodb_cgroup_memory.te
-#     dest: /tmp/mongodb_cgroup_memory.te
+#     src: "{{ item.src }}"
+#     dest: "{{ item.dest }}"
 #     owner: root
 #     group: root
 #     mode: '0644'
+#   with_items:
+#     - { src: files/local.pp , dest: /tmp/local.pp }
+#     - { src: files/local.te , dest: /tmp/local.te }
 
-# - name: MONGODB-BASE |Step 2. Once created, compile and load the custom policy module
-#   command: cd /tmp && checkmodule -M -m -o mongodb_cgroup_memory.mod mongodb_cgroup_memory.te && semodule_package -o mongodb_cgroup_memory.pp -m mongodb_cgroup_memory.mod && semodule -i mongodb_cgroup_memory.pp
+# - name: MONGODB-BASE | Config SELInix
+#   command: semodule -i /tmp/local.pp
+  #chdir: /tmp
 
-# - name: MONGODB-BASE |Step 3. Update the SELinux policy to allow the mongod service to use the new directory
-#   command: semanage fcontext -a -t mongod_var_lib_t {{ mongodb_datadrive }}.*
+# - block:
+#   - name: configure SELinux file contexts for mongodb
+#     sefcontext:
+#       target: "{{ item.target }}"
+#       setype: "{{ item.setype }}"
+#       reload: true
+#       state: present
+#     with_items:
+#       - target: "{{ mongodb_daemon_bin }}"
+#         setype: mongod_exec_t
+#       - target: "{{ mongodb_datadrive }}(/.*)?"
+#         setype: mongod_var_lib_t
+#       - target: "{{ mongodb_conf_pidFile | dirname }}(/.*)?"
+#         setype: mongod_var_run_t
+#     notify: restart_mongodb
 
-# - name: MONGODB-BASE |Step 4. Update the SELinux user policy for the new directory
-#   command: chcon -Rv -u system_u -t mongod_var_lib_t {{ mongodb_datadrive }}
+#   - name: ensure SELinux file contexts are applied
+#     shell: restorecon -vr "{{ item }}"
+#     with_items:
+#       - "{{ mongodb_daemon_bin }}"
+#       - "{{ mongodb_datadrive }}"
+#       - "{{ mongodb_conf_pidFile | dirname }}"
+#     register: restorecon
+#     changed_when: restorecon.stdout != ""
 
-# - name: MONGODB-BASE |Step 5. Apply the updated SELinux policies to the directory
-#   command: restorecon -R -v {{ mongodb_datadrive }}
+#   - name: configure SELinux network ports for mongodb
+#     seport:
+#       ports: "{{ mongodb_port }}"
+#       proto: tcp
+#       setype: mongod_port_t
+#       reload: true
+#       state: present
+#     notify: restart_mongodb
+#   when: ansible_selinux and ansible_selinux.status == "enabled"
 
-# - name: MONGODB-BASE |Step 6. Non-Default MongoDB Ports
-#   seport:
-#     ports: "{{ mongodb_port }}"
-#     proto: tcp
-#     setype: mongod_port_t
-#     state: present
-####################################
 
 # - name: Cenfig SELinux
 #   block:
@@ -175,31 +222,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-- name: MONGODB-BASE |Allow service mongodb in firewalld
-  firewalld:
-    service: mongodb
-    permanent: yes
-    state: enabled
-
-
-- name: MONGODB-BASE |Allow port {{ mongodb_port }} in firewalld
-  firewalld:
-    port: "{{ mongodb_port }}/tcp"
-    permanent: yes
-    state: enabled
 
 
 

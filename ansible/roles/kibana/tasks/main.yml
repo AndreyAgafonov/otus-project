@@ -1,5 +1,24 @@
 ---
 # tasks file for nginx
+
+- name: KIBANA | Allow port {{ mongodb_port }} in firewalld
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: yes
+    state: enabled
+  loop:
+    - "{{ elasticsearch_port_mgmt }}"
+    - "{{ elasticsearch_port }}"
+    - "{{ kibana_port }}"
+    - "{{ logstash_bits_port }}"
+
+
+- name: KIBANA | restart_firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: restarted
+
 - name: KIBANA | Install Kibana
   block:
   - name: KIBANA | elasticsearch, set value vm.max_map_count (For production mode required)
@@ -50,16 +69,16 @@
 
 #=====
   - name: KIBANA | logstash, deliveryt input,output and filter config for logstash {{ logstash_work_dir }}
-    template:
+    copy:
       backup: true
       owner: root
       group: root
       src: "{{ item.src }}"
       dest: "{{ item.dest }}"
     with_items:
-      - { src: input.conf.j2, dest: "{{ logstash_conf_dir }}/input.conf" }
-      - { src: filter.conf.j2, dest: "{{ logstash_conf_dir }}/filter.conf" }
-      - { src: output.conf.j2, dest: "{{ logstash_conf_dir }}/output.conf" }
+      - { src: files/input.conf.j2, dest: "{{ logstash_conf_dir }}/input.conf" }
+      - { src: files/filter.conf.j2, dest: "{{ logstash_conf_dir }}/filter.conf" }
+      - { src: files/output.conf.j2, dest: "{{ logstash_conf_dir }}/output.conf" }
 
 #====
   - name: KIBANA | Kibana, Delivery Docker-compose to a work Dir ("{{ kibana_work_dir }}/docker-compose.yml")
@@ -82,22 +101,22 @@
   #   #register: output
   #   tags:
   #     - docker-copmose
-  - name: KIBANA | add service to allow for firewalld
-    firewalld:
-      service: docker
-      permanent: yes
-      state: enabled
+  # - name: KIBANA | add service to allow for firewalld
+  #   firewalld:
+  #     service: docker
+  #     permanent: yes
+  #     state: enabled
 
-  - name: KIBANA | add port to allow for firewalld
-    firewalld:
-      port: "{{ item }}"
-      permanent: yes
-      state: enabled
-    loop:
-      - "{{ elasticsearch_port_mgmt }}/tcp"
-      - "{{ elasticsearch_port }}/tcp"
-      - "{{ kibana_port }}/tcp"
-      - "{{ logstash_bits_port }}/tcp"
+  # - name: KIBANA | add port to allow for firewalld
+  #   firewalld:
+  #     port: "{{ item }}"
+  #     permanent: yes
+  #     state: enabled
+  #   loop:
+  #     - "{{ elasticsearch_port_mgmt }}/tcp"
+  #     - "{{ elasticsearch_port }}/tcp"
+  #     - "{{ kibana_port }}/tcp"
+  #     - "{{ logstash_bits_port }}/tcp"
 
   - name: KIBANA | Check container elasticsearch status (GET) ant return 200 code
     uri:

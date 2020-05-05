@@ -19,6 +19,7 @@
     - checkpolicy
     - policycoreutils-python
     - python-pip
+    - checkpolicy
 
 - name: PREPARE |Set timezone
   timezone:
@@ -42,9 +43,22 @@
   hostname:
     name: "{{ inventory_hostname }}"
 
+- name: PREPARE |Allow service mongodb in firewalld
+  firewalld:
+    service: ssh
+    permanent: yes
+    state: enabled
+
+- name: PREPARE |Allow port {{ mongodb_port }} in firewalld
+  firewalld:
+    port: "22/tcp"
+    permanent: yes
+    state: enabled
+
 - name:  PREPARE |  Check  Firewalld  is Enabled and started
   systemd:
     name: firewalld
     state: started
     enabled: true
+
 ...

@@ -19,6 +19,6 @@ cd /vagrant/ansible
 #ansible-playbook install_nginx.yml
 # Устанавливаем сервер удаленного прияема логов
 ansible-playbook projectX.yml
-
+#ansible-playbook node-exporter.yml
 
 

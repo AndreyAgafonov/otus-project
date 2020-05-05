@@ -2,6 +2,43 @@
 - name: GLUSTER-SERVER | prepare disk
   include: part.yml
 
+- name: GLUSTER-SERVER |Allow service mongodb in firewalld
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  loop:
+    - nfs
+    - samba
+    - samba-client
+
+
+
+- name: GLUSTER-SERVER |Allow ports  in firewalld for Gluster
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  loop:
+    - 111/tcp
+    - 139/tcp
+    - 445/tcp
+    - 965/tcp
+    - 2049/tcp
+    - 38465-38469/tcp
+    - 631/tcp
+    - 111/udp
+    - 963/udp
+    - 49152-49251/tcp
+    - 24007-24008/tcp
+
+
+- name: GLUSTER-SERVER |restart_firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: restarted
+
 - name: GLUSTER-SERVER | add gluster repo
   yum:
     name: centos-release-gluster

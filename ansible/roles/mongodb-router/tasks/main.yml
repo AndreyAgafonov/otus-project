@@ -6,6 +6,13 @@
     permanent: yes
     state: enabled
 
+- name: MONGODB-ROUTER |restart_firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: restarted
+
+
 - name: MONGODB-ROUTER|Install mongos v{{ mongodb_version }}
   yum:
     name: "{{ packages }}"

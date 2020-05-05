@@ -152,12 +152,12 @@ MACHINES = {
   #   :machine_memory => '386',
   # },
 
-#   :prometheusposeydon => {
-#     :box_name => "centos/7",
-#     :ip_addr => '172.20.1.220',
-#     :machine_cpu => '1',
-#     :machine_memory => '512',
-#   },
+  :prometheusposeydon => {
+    :box_name => "centos/7",
+    :ip_addr => '172.20.1.220',
+    :machine_cpu => '1',
+    :machine_memory => '512',
+  },
 
 
   ###################################

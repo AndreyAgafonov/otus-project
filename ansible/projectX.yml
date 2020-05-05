@@ -2,6 +2,7 @@
 - name: Deploy shared MongoDB Cluster
   hosts: mongodb
   become: true
+  become_method: sudo
   gather_facts: yes
   roles:
     - mongodb-sh
@@ -10,8 +11,8 @@
   hosts: gluster
   become: yes
   roles:
-    - gluster-setup
     - keepalived
+    - gluster-setup
 
 - name: Deploy HAProxy
   hosts: haproxy
@@ -48,3 +49,29 @@
   roles:
     - backup
 
+- name: install node-exporter
+  hosts:
+    - mongodb
+    - haproxy
+    - cer
+    - gluster
+    - kibana
+  become: true
+  gather_facts: yes
+  roles:
+    - node-exporter
+
+- name: install node-exporter for mongo specify metrics
+  hosts: mongodb
+  become: true
+  gather_facts: yes
+  roles:
+    - node-exporter-mongodb
+
+
+- name: install prometheus
+  hosts: prometheus
+  become: true
+  gather_facts: yes
+  roles:
+    - prometheus

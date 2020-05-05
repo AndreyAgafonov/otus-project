@@ -1,5 +1,17 @@
 ---
 # tasks file for provision/roles/nc-keepalived
+- name: Allow service mongodb in firewalld
+  firewalld:
+    rich_rule: rule protocol value="vrrp" accept
+    permanent: yes
+    state: enabled
+
+
+- name: restart_firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: restarted
 
 - name: install keepalived
   yum:

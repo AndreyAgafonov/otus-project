@@ -1,5 +1,17 @@
 ---
 # tasks file for nginx
+- name: CER |Allow port {{ mongodb_port }} in firewalld
+  firewalld:
+    port: "{{ cer_port }}/tcp"
+    permanent: yes
+    state: enabled
+
+
+- name: CER |restart_firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: restarted
 
 - name: CER | CER, install python-setup-tools
   yum:

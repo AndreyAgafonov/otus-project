@@ -14,3 +14,9 @@
     enabled: yes
     daemon_reload: yes
     state: restarted
+
+- name: restart_firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: restarted

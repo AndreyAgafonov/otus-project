@@ -44,7 +44,7 @@ defaults
 #HAProxy Monitoring Config
 #---------------------------------------------------------------------
 frontend stats
-    bind *:8080
+    bind *:{{ haproxy_monitoring_port }}
     stats enable
     stats uri /stats
     stats refresh 10s
