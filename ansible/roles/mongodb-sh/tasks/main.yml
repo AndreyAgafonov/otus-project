@@ -27,18 +27,53 @@
     mode: '0777'
   with_items:
     - { src: createShardinDBs.js.j2 , dest: /tmp/createShardinDBs.js }
-    - { src: createUsers.js.j2 , dest: /tmp/createUsers.js }
+    # - { src: createUsers.js.j2 , dest: /tmp/createUsers.js }
   when: (inventory_hostname in mongodb_router[0])
 
-- name: MONGODB-SHARD | Create users for CER
-  shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/createUsers.js'
-  retries: 5
-  delay: 5
-  when: (inventory_hostname in mongodb_router[0])
+# - name: MONGODB-SHARD | Create users for CER
+#   shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/createUsers.js'
+#   retries: 5
+#   delay: 5
+#   when: (inventory_hostname in mongodb_router[0])
+
+
+
+- name: MONGODB-REPLICASET | Create {{ mongodb_user_cer }} user for Currency enchange service
+  mongodb_user:
+    login_user: "{{ mongodb_database_user }}"
+    login_password: "{{ mongodb_database_password }}"
+    login_database: admin
+    login_port: "{{ mongodb_port }}"
+    name: "{{ mongodb_user_cer }}"
+    password: "{{ mongodb_user_cer_pass }}"
+    database: admin
+    state: present
+    roles:
+      - db: admin
+        role: clusterMonitor
+      - db: "{{ cer_db }}"
+        role: readWrite
+  when: (inventory_hostname in mongodb_masters)
+
+- name: MONGODB-REPLICASET | Create {{ mongodb_user_backup }} user mongodb backup
+  mongodb_user:
+    login_user: "{{ mongodb_database_user }}"
+    login_password: "{{ mongodb_database_password }}"
+    login_database: admin
+    login_port: "{{ mongodb_port }}"
+    name: "{{ mongodb_user_backup }}"
+    password: "{{ mongodb_user_backup_pass }}"
+    database: admin
+    state: present
+    roles:
+      - db: "admin"
+        role: "backup"
+      - db: "config"
+        role: "read"
+  when: (inventory_hostname in mongodb_masters)
 
 - name: MONGODB-SHARD | Enable shardign DB
   shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/createShardinDBs.js'
   retries: 5
   delay: 5
   when: (inventory_hostname in mongodb_router[0])
-

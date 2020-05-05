@@ -17,6 +17,8 @@ db.city.insertMany( [
      {  City: "Chaboksary", Population: 270000 },
      ])
 
+sh.shardCollection( "cer.city", {"_id" :1} )
+
 // db.getCollectionNames().forEach(function(coll_name) {
 //   db.runCommand( { shardcollection : coll_name, key : { _id : 1 } } )
 // })
