@@ -1,7 +1,0 @@
----
-- name: install node-exporter
-  hosts: mongodb
-  become: true
-  gather_facts: yes
-  roles:
-    - node-exporter-mongodb

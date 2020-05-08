@@ -1,7 +1,0 @@
----
-- name: install mongod
-  hosts: mongodb
-  become: true
-  gather_facts: yes
-  roles:
-    - mongodb-sh

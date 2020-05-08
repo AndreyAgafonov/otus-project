@@ -2,6 +2,7 @@ version: '2'
 services:
   {{ elasticsearch_container_name }}:
     image: docker.elastic.co/elasticsearch/elasticsearch:{{ kibana_version }}
+    restart: always
     container_name: {{ elasticsearch_container_name }}
     environment:
       - node.name={{ elasticsearch_container_name }}
@@ -22,6 +23,7 @@ services:
 
   {{ kibana_container_name }}:
     image: docker.elastic.co/kibana/kibana:{{ kibana_version }}
+    restart: always
     container_name: {{ kibana_container_name }}
     links:
       - "{{ elasticsearch_container_name }}:elasticsearch"
@@ -34,6 +36,7 @@ services:
 
   {{ logstash_container_name }}:
     image: docker.elastic.co/logstash/logstash:{{ kibana_version }}
+    restart: always
     container_name: {{ logstash_container_name }}
     links:
       - "{{ elasticsearch_container_name }}:elasticsearch"

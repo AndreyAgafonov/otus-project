@@ -38,7 +38,7 @@
 
 
 
-- name: MONGODB-REPLICASET | Create {{ mongodb_user_cer }} user for Currency enchange service
+- name: MONGODB-SHARD | Create {{ mongodb_user_cer }} user for Currency enchange service
   mongodb_user:
     login_user: "{{ mongodb_database_user }}"
     login_password: "{{ mongodb_database_password }}"
@@ -55,7 +55,7 @@
         role: readWrite
   when: (inventory_hostname in mongodb_masters)
 
-- name: MONGODB-REPLICASET | Create {{ mongodb_user_backup }} user mongodb backup
+- name: MONGODB-SHARD | Create {{ mongodb_user_backup }} user mongodb backup
   mongodb_user:
     login_user: "{{ mongodb_database_user }}"
     login_password: "{{ mongodb_database_password }}"
@@ -76,4 +76,21 @@
   shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/createShardinDBs.js'
   retries: 5
   delay: 5
+  when: (inventory_hostname in mongodb_router[0])
+
+- name: MONGODB-SHARD | Template for demo database
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0777'
+  with_items:
+    - { src: files/countries-small.json , dest: /tmp/countries-small.json }
+  when: (inventory_hostname in mongodb_router[0])
+
+- name: MONGODB-SHARD | Import Demo collection
+  shell: 'mongoimport --host localhost --port={{ mongodb_router_port }} --username={{ mongodb_database_user }} --password {{ mongodb_database_password }} --authenticationDatabase admin --db {{ cer_db }}  --collection=country --file=countries-small.json'
+  when: (inventory_hostname in mongodb_router[0])
+
+- name: MONGODB-SHARD | Enable shardign DB
+  shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    <"sh.shardCollection( "{{ cer_db }}.country", {"_id" :1} )"'
   when: (inventory_hostname in mongodb_router[0])
