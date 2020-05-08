@@ -1,24 +1,33 @@
- 172.20.1.5		dns-germes	dns-germes.cloud16.home
- 172.20.1.10		haproxy-zefs	haproxy-zefs.cloud16.home
- 172.20.1.11		haproxy-aid	haproxy-aid.cloud16.home
- 172.20.1.15		cer-appolo	cer-appolo.cloud16.home
- 172.20.1.16		cer-dionis	cer-dionis.cloud16.home
- 172.20.1.17		cer-morphius	cer-morphius.cloud16.home
- 172.20.1.20		mdb-afina	mdb-afina.cloud16.home
- 172.20.1.21		mdb-fobos	mdb-fobos.cloud16.home
- 172.20.1.22		mdb-gera	mdb-gera.cloud16.home
- 172.20.1.23		mdb-deimos	mdb-deimos.cloud16.home
- 172.20.1.24		mdb-afrodita	mdb-afrodita.cloud16.home
- 172.20.1.25		mdb-geya	mdb-geya.cloud16.home
- 172.20.1.26		mdb-clio	mdb-clio.cloud16.home
- 172.20.1.27		mdb-nica	mdb-nica.cloud16.home
- 172.20.1.28		mdb-erida	mdb-erida.cloud16.home
- 172.20.1.29		mdb-femida	mdb-femida.cloud16.home
- 172.20.1.30		mdb-gestia	mdb-gestia.cloud16.home
- 172.20.1.31		mdb-eos	mdb-eos.cloud16.home
- 172.20.1.40		gluster-ares	gluster-ares.cloud16.home
- 172.20.1.41		gluster-erot	gluster-erot.cloud16.home
- 172.20.1.42		gluster-gefest	gluster-gefest.cloud16.home
- 172.20.1.220		prometheus-poseydon	prometheus-poseydon.cloud16.home
- 172.20.1.210		kibana-plutos	kibana-plutos.cloud16.home
- 172.20.1.200		tartarus	tartarus.cloud16.home
+##Haproxy
+172.20.1.10		haproxy-zefs	haproxy-zefs.cloud16.home
+172.20.1.11		haproxy-aid	haproxy-aid.cloud16.home
+
+##CER
+172.20.1.15		cer-appolo	cer-appolo.cloud16.home
+172.20.1.16		cer-dionis	cer-dionis.cloud16.home
+172.20.1.17		cer-morphius	cer-morphius.cloud16.home
+
+###config
+172.20.1.20		mdb-afina	mdb-afina.cloud16.home
+172.20.1.21		mdb-fobos	mdb-fobos.cloud16.home
+172.20.1.22		mdb-gera	mdb-gera.cloud16.home
+
+###rs1
+172.20.1.24		mdb-afrodita	mdb-afrodita.cloud16.home
+172.20.1.25		mdb-geya	mdb-geya.cloud16.home
+172.20.1.26		mdb-clio	mdb-clio.cloud16.home
+
+#rs2
+172.20.1.28		mdb-erida	mdb-erida.cloud16.home
+172.20.1.29		mdb-femida	mdb-femida.cloud16.home
+172.20.1.31		mdb-eos	mdb-eos.cloud16.home
+
+##Gluster
+172.20.1.40		gluster-ares	gluster-ares.cloud16.home
+172.20.1.41		gluster-erot	gluster-erot.cloud16.home
+
+##Prom
+172.20.1.220		prometheus-poseydon	prometheus-poseydon.cloud16.home
+
+##Kibana
+172.20.1.210		kibana-plutos	kibana-plutos.cloud16.home
