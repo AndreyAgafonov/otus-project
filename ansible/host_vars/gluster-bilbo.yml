@@ -1,0 +1,5 @@
+
+keepalive_virtual_router_id: 100
+keepalive_priority: 100
+keepalive_state: BACKUP
+keepalive_pass: gCg3rsd

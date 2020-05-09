@@ -1,20 +1,29 @@
 ---
 # tasks file for mongodb-base
-############################################################
-# - name: Disable SELinux
-#   selinux:
-#     policy: targeted
-#     state: enforcing
+- name: Get service list
+  service_facts:
 
-# - name: Disable Linux
-#   command: setenforce 1
-############################################################
+- name: Check if server exist
+  systemd:
+    name: node-exporter
+    state: stopped
+  when: "'mongod.service' in services"
 
+- name: Check if folder {{ mongodb_datadrive }} exist
+  stat:
+    path: "{{ mongodb_datadrive }}"
+  register: mongo_folder
+
+- name: Remove old database folder
+  file:
+    path: "{{ mongodb_datadrive }}"
+    state: absent
+  when: mongo_folder.stat.isdir is defined and mongo_folder.stat.isdir
 
 - name: MONGODB-BASE | Create user for mongodb
   user:
-   name: "{{ mongodb_user }}"
-   comment: User for mongodb dataBase
+    name: "{{ mongodb_user }}"
+    comment: User for mongodb dataBase
 
 - name: MONGODB-BASE |Create dir for data
   file:
@@ -247,13 +256,3 @@
     state: started
     name: mongod
 
-
-
-
-
-
-#- name: MONGODB-BASE |Stop service mongod, if started
-#  systemd: name=mongod.service state=stopped
-
-#- name: MONGODB-BASE |Backup mongod.conf
-#  shell: sudo cp /etc/mongod.conf /etc/mongod.conf.bak

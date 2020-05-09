@@ -1,0 +1,4 @@
+keepalive_virtual_router_id: 201
+keepalive_priority: 101
+keepalive_state: MASTER
+keepalive_pass: YhSAMz

@@ -1,5 +1,9 @@
 use {{ cer_db }}
-db.scheme.insertOne({ "DBVersion": 1, "comment": "Init sharding" })
 sh.enableSharding("{{ cer_db }}")
 
-sh.shardCollection( "cer.city", {"_id" :1} )
+sh.shardCollection( "{{ cer_db }}.city", {"_id" :1} )
+sh.shardCollection( "{{ cer_db }}.companies", {"_id" :1} )
+db.scheme.insertOne({ "DBVersion": 1, "comment": "Init sharding" })
+
+use admin
+sh.startBalancer()

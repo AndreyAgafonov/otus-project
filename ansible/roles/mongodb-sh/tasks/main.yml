@@ -72,11 +72,6 @@
         role: "read"
   when: (inventory_hostname in mongodb_masters)
 
-- name: MONGODB-SHARD | Enable shardign DB
-  shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/createShardinDBs.js'
-  retries: 5
-  delay: 5
-  when: (inventory_hostname in mongodb_router[0])
 
 - name: MONGODB-SHARD | Template for demo database
   copy:
@@ -84,13 +79,21 @@
     dest: "{{ item.dest }}"
     mode: '0777'
   with_items:
-    - { src: files/countries-small.json , dest: /tmp/countries-small.json }
+    - { src: files/companies.json , dest: /tmp/companies.json }
   when: (inventory_hostname in mongodb_router[0])
 
 - name: MONGODB-SHARD | Import Demo collection
-  shell: 'mongoimport --host localhost --port={{ mongodb_router_port }} --username={{ mongodb_database_user }} --password {{ mongodb_database_password }} --authenticationDatabase admin --db {{ cer_db }}  --collection=country --file=countries-small.json'
+  shell: 'mongoimport --host localhost --port={{ mongodb_router_port }} --username={{ mongodb_database_user }} --password {{ mongodb_database_password }} --authenticationDatabase admin --db {{ cer_db }}  --collection=companies --file=companies.json'
+  args:
+    chdir: /tmp
   when: (inventory_hostname in mongodb_router[0])
 
+# - name: MONGODB-SHARD | Enable shardign DB
+#   shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    <"sh.shardCollection( "{{ cer_db }}.country", {"_id" :1} )"'
+#   when: (inventory_hostname in mongodb_router[0])
+
 - name: MONGODB-SHARD | Enable shardign DB
-  shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    <"sh.shardCollection( "{{ cer_db }}.country", {"_id" :1} )"'
+  shell: 'mongo --host localhost --port {{ mongodb_router_port }} -u {{ mongodb_database_user }} -p {{ mongodb_database_password }} --authenticationDatabase admin    </tmp/createShardinDBs.js'
+  retries: 5
+  delay: 5
   when: (inventory_hostname in mongodb_router[0])

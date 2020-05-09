@@ -8,6 +8,6 @@ galaxy_info:
         - all
   galaxy_tags:
     - gluster
-dependencies:
-  - prepare
+# dependencies:
+#   - prepare
 

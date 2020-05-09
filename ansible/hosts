@@ -1,33 +1,33 @@
 ##Haproxy
-172.20.1.10		haproxy-zefs	haproxy-zefs.cloud16.home
-172.20.1.11		haproxy-aid	haproxy-aid.cloud16.home
+172.20.1.10		haproxy-radagast	haproxy-radagast.cloud16.home
+172.20.1.11		haproxy-gendalf	haproxy-gendalf.cloud16.home
 
 ##CER
-172.20.1.15		cer-appolo	cer-appolo.cloud16.home
-172.20.1.16		cer-dionis	cer-dionis.cloud16.home
-172.20.1.17		cer-morphius	cer-morphius.cloud16.home
+172.20.1.15		cer-legolas	cer-legolas.cloud16.home
+172.20.1.16		cer-tauriel	cer-tauriel.cloud16.home
+172.20.1.17		cer-tranduil	cer-tranduil.cloud16.home
 
 ###config
-172.20.1.20		mdb-afina	mdb-afina.cloud16.home
-172.20.1.21		mdb-fobos	mdb-fobos.cloud16.home
-172.20.1.22		mdb-gera	mdb-gera.cloud16.home
+172.20.1.20		mdb-torin	mdb-torin.cloud16.home
+172.20.1.21		mdb-balin	mdb-balin.cloud16.home
+172.20.1.22		mdb-dvalin	mdb-dvalin.cloud16.home
 
 ###rs1
-172.20.1.24		mdb-afrodita	mdb-afrodita.cloud16.home
-172.20.1.25		mdb-geya	mdb-geya.cloud16.home
-172.20.1.26		mdb-clio	mdb-clio.cloud16.home
+172.20.1.24		mdb-bifur	mdb-bifur.cloud16.home
+172.20.1.25		mdb-gloin	mdb-gloin.cloud16.home
+172.20.1.26		mdb-nori	mdb-nori.cloud16.home
 
 #rs2
-172.20.1.28		mdb-erida	mdb-erida.cloud16.home
-172.20.1.29		mdb-femida	mdb-femida.cloud16.home
-172.20.1.31		mdb-eos	mdb-eos.cloud16.home
+172.20.1.28		mdb-bombur	mdb-bombur.cloud16.home
+172.20.1.29		mdb-fili	mdb-fili.cloud16.home
+172.20.1.31		mdb-kili	mdb-kili.cloud16.home
 
 ##Gluster
-172.20.1.40		gluster-ares	gluster-ares.cloud16.home
-172.20.1.41		gluster-erot	gluster-erot.cloud16.home
+172.20.1.40		gluster-bilbo	gluster-bilbo.cloud16.home
+172.20.1.41		gluster-frodo	gluster-frodo.cloud16.home
 
 ##Prom
-172.20.1.220		prometheus-poseydon	prometheus-poseydon.cloud16.home
+172.20.1.220		prom-sauron	prom-sauron.cloud16.home
 
 ##Kibana
-172.20.1.210		kibana-plutos	kibana-plutos.cloud16.home
+172.20.1.210		kibana-elrond	kibana-elrond.cloud16.home

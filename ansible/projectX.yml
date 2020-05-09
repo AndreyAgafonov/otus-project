@@ -1,72 +1,76 @@
 ---
-# - name: Deploy shared MongoDB Cluster
-#   hosts: mongodb
-#   become: true
-#   become_method: sudo
-#   gather_facts: yes
-#   roles:
-#     - mongodb-sh
+- name: Prepare machines
+  hosts: all
+  become: true
+  become_method: sudo
+  gather_facts: yes
+  roles:
+    - prepare
 
-# - name: Deploy GlusterFS nodes
-#   hosts: gluster
-#   become: yes
-#   roles:
-#     - keepalived
-#     - gluster-setup
+- name: Deploy shared MongoDB Cluster
+  hosts: mongodb
+  become: true
+  become_method: sudo
+  gather_facts: yes
+  roles:
+    - mongodb-sh
 
-# - name: Deploy HAProxy
-#   hosts: haproxy
-#   become: yes
-#   roles:
-#     - keepalived
-#     - haproxy
+- name: Deploy GlusterFS nodes
+  hosts: gluster
+  become: yes
+  roles:
+    - keepalived
+    - gluster-setup
 
-# - name: Deploy cer
-#   hosts: cer
-#   become: yes
-#   roles:
-#     - cer
+- name: Deploy HAProxy
+  hosts: haproxy
+  become: yes
+  roles:
+    - keepalived
+    - haproxy
 
-# - name: Deploy logging tools
-#   hosts:
-    # - mongodb
-    #  - haproxy
-    # - gluster
-  #   - cer
-  # become: yes
-  # roles:
-  #   - filebeat
+- name: Deploy cer
+  hosts: cer
+  become: yes
+  roles:
+    - cer
 
-# - name: Deploy Kibana
-#   hosts: kibana
-#   become: yes
-#   roles:
-#     - kibana
+- name: Deploy logging tools
+  hosts:
+    - mongodb
+    - haproxy
+    - gluster
+    - cer
+  become: yes
+  roles:
+    - filebeat
 
-# - name: backup
-#   hosts: backup
-#   become: yes
-#   roles:
-#     - backup
+- name: Deploy Kibana
+  hosts: kibana
+  become: yes
+  roles:
+    - kibana
 
-# - name: install node-exporter
-#   hosts:
-#     - mongodb
-#     - haproxy
-#     - cer
-#     - gluster
-#     - kibana
-#   become: true
-#   gather_facts: yes
-#   roles:
-#     - node-exporter
+- name: backup
+  hosts: backup
+  become: yes
+  roles:
+    - backup
 
-# - name: install node-exporter for mongo specify metrics
-#   hosts: mongodb
-#   become: true
-#   gather_facts: yes
-#   roles:
-#     - node-exporter-mongodb
+- name: install node-exporter
+  hosts:
+    - all
+  become: true
+  gather_facts: yes
+  roles:
+    - node-exporter
+
+- name: install node-exporter for mongo specify metrics
+  hosts: mongodb
+  become: true
+  gather_facts: yes
+  roles:
+    - node-exporter-mongodb
 
 
 - name: install prometheus

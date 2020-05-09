@@ -3,7 +3,7 @@
 #Устанавливаем ansible
 yum install -y epel-release
 yum install -y ansible mc
-
+#yum install -y cowsay
 #sudo easy_install pip
 #pip install docker docker-py docker-compose
 

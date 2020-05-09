@@ -1,4 +1,4 @@
-mongodb_replicaset_name: rodos
+mongodb_replicaset_name: moria
 mongodb_database_user: admin
 mongodb_database_password: d3Csp3P2
 mongodb_port: "{{ 27017 | string }}"

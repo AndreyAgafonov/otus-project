@@ -8,5 +8,5 @@ galaxy_info:
   galaxy_tags:
     - bits
     - filebeats
-dependencies:
-  - prepare
+# dependencies:
+#   - prepare

@@ -7,6 +7,6 @@ galaxy_info:
     - mongodb
     - mongodb_shard
 dependencies:
-  - prepare
+  # - prepare
   - mongodb-rs
   - mongodb-router

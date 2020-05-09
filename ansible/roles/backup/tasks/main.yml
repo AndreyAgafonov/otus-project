@@ -11,10 +11,23 @@
       - glusterfs-fuse
     state: present
 
+- name: check if folder "{{ gluster_backup_dir }}" exists
+  stat:
+    path: "{{ gluster_backup_dir }}"
+  register: check_dir
+
+- debug:
+    msg:
+      - "{{ gluster_backup_dir }}"
+      - "{{ check_dir }}"
+
+
 - name: create gluster mount dir
   file:
     name: "{{ gluster_backup_dir }}"
     state: directory
+  when: not check_dir.stat.exists
+
 
 - name: mount gluster shared storage
   mount:

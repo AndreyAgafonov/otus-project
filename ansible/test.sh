@@ -1,1 +1,0 @@
-ssh -q -o "StrictHostKeyChecking no" vagrant@mdb-afina -i /vagrant/ansible.pem

@@ -701,8 +701,8 @@
           "$$hashKey": "object:693",
           "selected": false,
           "tags": [],
-          "text": "rs_rodos",
-          "value": "rs_rodos"
+          "text": "rs_moria",
+          "value": "rs_moria"
         },
         "datasource": "Prometheus",
         "definition": "label_values(mongodb_role)",
@@ -728,14 +728,14 @@
           {
             "$$hashKey": "object:692",
             "selected": false,
-            "text": "rs_rodos",
-            "value": "rs_rodos"
+            "text": "rs_moria",
+            "value": "rs_moria"
           },
           {
             "$$hashKey": "object:693",
             "selected": false,
-            "text": "rs_sparta",
-            "value": "rs_sparta"
+            "text": "rs_erebor",
+            "value": "rs_erebor"
           }
         ],
         "query": "label_values(mongodb_role)",
@@ -806,8 +806,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "mdb-eos.cloud16.home:27017",
-          "value": "mdb-eos.cloud16.home:27017"
+          "text": "mdb-kili.cloud16.home:27017",
+          "value": "mdb-kili.cloud16.home:27017"
         },
         "datasource": "Prometheus",
         "definition": "label_values(mongodb_mongod_replset_member_state{mongodb_role=\"$replicaSets\",state=\"PRIMARY\"},name)",
@@ -820,8 +820,8 @@
         "options": [
           {
             "selected": true,
-            "text": "mdb-afina.cloud16.home:27019",
-            "value": "mdb-afina.cloud16.home:27019"
+            "text": "mdb-torin.cloud16.home:27019",
+            "value": "mdb-torin.cloud16.home:27019"
           }
         ],
         "query": "label_values(mongodb_mongod_replset_member_state{mongodb_role=\"$replicaSets\",state=\"PRIMARY\"},name)",

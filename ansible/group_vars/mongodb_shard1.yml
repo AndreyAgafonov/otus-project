@@ -1,4 +1,4 @@
-mongodb_replicaset_name: sparta
+mongodb_replicaset_name: erebor
 mongodb_database_user: admin
 mongodb_database_password: d3Csp3P1
 mongodb_port: "{{ 27017 | string }}"

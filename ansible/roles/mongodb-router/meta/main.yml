@@ -7,6 +7,6 @@ galaxy_info:
     - mongodb
     - mongodb_router
 dependencies:
-  - prepare
+  # - prepare
   - mongodb-base
   - mongodb-rs

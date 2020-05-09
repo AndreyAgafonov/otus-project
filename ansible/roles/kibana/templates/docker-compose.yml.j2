@@ -33,6 +33,8 @@ services:
       dockernet:
         aliases:
           - kibana.dockernet
+    depends_on:
+      - {{ elasticsearch_container_name }}
 
   {{ logstash_container_name }}:
     image: docker.elastic.co/logstash/logstash:{{ kibana_version }}
@@ -44,14 +46,21 @@ services:
       - {{ logstash_bits_port }}:5044
     volumes:
       - {{ logstash_conf_dir }}:/usr/share/logstash/pipeline
-
     networks:
       dockernet:
         aliases:
           - logstash.dockernet
-    depends_on:
-      - {{ elasticsearch_container_name }}
 
+  cerebro:
+    image: lmenezes/cerebro
+    restart: always
+    container_name: cerebro
+    ports:
+      - 9000:9000
+    networks:
+      dockernet:
+        aliases:
+          - cerebro.dockernet
 networks:
   dockernet:
     external:
