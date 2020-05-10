@@ -23,8 +23,8 @@
 172.20.1.31		mdb-kili	mdb-kili.cloud16.home
 
 ##Gluster
-172.20.1.40		gluster-bilbo	gluster-bilbo.cloud16.home
-172.20.1.41		gluster-frodo	gluster-frodo.cloud16.home
+172.20.1.41		gluster-bilbo	gluster-bilbo.cloud16.home
+172.20.1.42		gluster-frodo	gluster-frodo.cloud16.home
 
 ##Prom
 172.20.1.220		prom-sauron	prom-sauron.cloud16.home

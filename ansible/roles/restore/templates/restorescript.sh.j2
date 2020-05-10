@@ -1,0 +1,37 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]
+  then
+    echo -e "\e[7;31m Операция восстановления принимает только один аргумент - имя папки, из которой произввести восстановление  \e[0m"
+    exit 1
+  elif [ ! -d $1 ]
+    then
+      echo -e "\e[7;31m указанный путь не существует  \e[0m"
+      exit 1
+  fi
+
+backup_folder_name=$1
+mongodb_host="{{ groups.mongodb_config[2]}}.{{ domain }}"
+mongodb_port="{{ mongodb_router_port }}"
+mongodb_user="{{ mongodb_database_user }}"
+mongodb_pass="{{ mongodb_database_password }}"
+mongodb_authdb=admin
+mongodb_backup_db="{{ cer_db }}"
+
+#понеслась
+echo $(date), "Запущено восстановление из бекапа" >> /var/log/mongobackup.log
+echo $backup_folder_name  >> /var/log/mongobackup.log
+#mkdir $backup_folder_name
+mongorestore --gzip --drop --host $mongodb_host --port $mongodb_port --username $mongodb_user --password $mongodb_pass --authenticationDatabase $mongodb_authdb --db $mongodb_backup_db $backup_folder_name/$mongodb_backup_db
+#mongodump    --gzip --port $mongodb_port --host $mongodb_host --username $mongodb_user --password $mongodb_pass --authenticationDatabase $mongodb_authdb --db $mongodb_backup_db --out $backup_folder_name  >> /var/log/mongobackup.log
+if [[ $? != 0 ]]
+  then
+    echo $(date), "Восстановление успешно завершено" >> /var/log/mongobackup.log
+    exit 0
+  else
+    echo $(date), "Восстановление завершено с ошибкой" >> /var/log/mongobackup.log
+    exit 1
+fi
+
+
+

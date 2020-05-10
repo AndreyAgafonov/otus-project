@@ -1,0 +1,10 @@
+---
+
+- name: restore script
+  template:
+    src: restorescript.sh.j2
+    dest: /opt/restorescript.sh
+    mode: '0744'
+    owner: root
+    group: root
+

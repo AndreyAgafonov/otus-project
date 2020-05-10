@@ -1,7 +1,7 @@
 #!/bin/bash
 
 backup_folder_name=$(echo "{{ gluster_backup_dir }}/$(date +"%Y-%m-%d-%H-%M")")
-mongodb_host="{{ groups.mongodb_config[0]}}.{{ domain }}"
+mongodb_host="{{ groups.mongodb_config[2]}}.{{ domain }}"
 mongodb_port="{{ mongodb_router_port }}"
 mongodb_user="{{ mongodb_user_backup }}"
 mongodb_pass="{{ mongodb_user_backup_pass }}"
