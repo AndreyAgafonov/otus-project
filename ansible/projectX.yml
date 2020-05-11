@@ -57,19 +57,14 @@
 #   roles:
 #     - backup
 
-- name: restore
-  hosts: backup
-  become: yes
-  roles:
-    - restore
 
-# - name: install node-exporter
-#   hosts:
-#     - all
-#   become: true
-#   gather_facts: yes
-#   roles:
-#     - node-exporter
+- name: install node-exporter
+  hosts:
+    - all
+  become: true
+  gather_facts: yes
+  roles:
+    - node-exporter
 
 # - name: install node-exporter for mongo specify metrics
 #   hosts: mongodb
@@ -79,10 +74,19 @@
 #     - node-exporter-mongodb
 
 
-- name: install prometheus
-  hosts: prometheus
-  become: true
-  gather_facts: yes
-  roles:
-    - prometheus
-    - grafana
+# - name: install prometheus
+#   hosts: prometheus
+#   become: true
+#   gather_facts: yes
+#   roles:
+#     - prometheus
+#     - grafana
+
+
+
+################################
+# - name: restore
+#   hosts: backup
+#   become: yes
+#   roles:
+#     - restore

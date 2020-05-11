@@ -43,7 +43,7 @@
   hostname:
     name: "{{ inventory_hostname }}"
 
-- name: PREPARE |Allow service mongodb in firewalld
+- name: PREPARE |Allow service ssh in firewalld
   firewalld:
     service: ssh
     permanent: yes

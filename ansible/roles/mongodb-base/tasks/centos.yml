@@ -5,7 +5,7 @@
 
 - name: Check if server exist
   systemd:
-    name: node-exporter
+    name: mongod
     state: stopped
   when: "'mongod.service' in services"
 

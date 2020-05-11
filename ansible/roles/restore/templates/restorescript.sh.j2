@@ -2,11 +2,11 @@
 
 if [ $# -ne 1 ]
   then
-    echo -e "\e[7;31m Операция восстановления принимает только один аргумент - имя папки, из которой произввести восстановление  \e[0m"
+    echo -e "\e[7;31m 1Операция восстановления принимает только один аргумент - имя папки, из которой произввести восстановление  \e[0m"
     exit 1
   elif [ ! -d $1 ]
     then
-      echo -e "\e[7;31m указанный путь не существует  \e[0m"
+      echo -e "\e[7;31m 2указанный путь не существует  \e[0m"
       exit 1
   fi
 
@@ -24,7 +24,7 @@ echo $backup_folder_name  >> /var/log/mongobackup.log
 #mkdir $backup_folder_name
 mongorestore --gzip --drop --host $mongodb_host --port $mongodb_port --username $mongodb_user --password $mongodb_pass --authenticationDatabase $mongodb_authdb --db $mongodb_backup_db $backup_folder_name/$mongodb_backup_db
 #mongodump    --gzip --port $mongodb_port --host $mongodb_host --username $mongodb_user --password $mongodb_pass --authenticationDatabase $mongodb_authdb --db $mongodb_backup_db --out $backup_folder_name  >> /var/log/mongobackup.log
-if [[ $? != 0 ]]
+if [[ $? == 0 ]]
   then
     echo $(date), "Восстановление успешно завершено" >> /var/log/mongobackup.log
     exit 0

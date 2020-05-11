@@ -8,3 +8,24 @@
     owner: root
     group: root
 
+- name: Get last backup
+  shell: "ls -la |awk '{print $9}' |sort -r |head -n1"
+  args:
+    chdir: "{{ gluster_backup_dir }}"
+  register: last_backup
+
+- name: debug last_folder
+  debug:
+    msg:
+      - "{{ last_backup.stdout }}"
+
+- name: Run restore
+  shell: ./restorescript.sh {{ gluster_backup_dir }}/{{ last_backup.stdout }}
+  args:
+    chdir: /opt
+  register: result
+
+- name: result backup
+  debug:
+    msg:
+      - "{{ result.stdout }}"

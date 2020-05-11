@@ -1,7 +1,7 @@
 {
   "MongoDb":
       {
-      "ConnectionString": "mongodb://{{mongodb_user_cer}}:{{ mongodb_user_cer_pass }}@172.20.1.20,172.20.1.21,172.20.1.22/admin",
+      "ConnectionString": "mongodb://{{mongodb_user_cer}}:{{ mongodb_user_cer_pass }}@{{ mongodb_router[0] }},{{ mongodb_router[1] }},{{ mongodb_router[2] }}/admin",
       "Database": "{{ cer_db }}"
       },
   "OpenExchangeRateConnection": {
