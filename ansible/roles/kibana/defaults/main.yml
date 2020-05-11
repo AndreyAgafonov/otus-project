@@ -9,6 +9,7 @@ kibana_datadrive: /opt
 kibana_port: 80
 kibana_version: "7.6.2"
 kibana_work_dir: "{{ kibana_datadrive }}/kibana"
+kibana_index_pattern: filebeat
 logstash_bits_port: 5044
 logstash_conf_dir: "{{ logstash_work_dir }}/conf.d"
 logstash_container_name: logstash-01

@@ -45,11 +45,11 @@
 #   roles:
 #     - filebeat
 
-# - name: Deploy Kibana
-#   hosts: kibana
-#   become: yes
-#   roles:
-#     - kibana
+- name: Deploy Kibana
+  hosts: kibana
+  become: yes
+  roles:
+    - kibana
 
 # - name: backup
 #   hosts: backup
@@ -58,13 +58,13 @@
 #     - backup
 
 
-- name: install node-exporter
-  hosts:
-    - all
-  become: true
-  gather_facts: yes
-  roles:
-    - node-exporter
+# - name: install node-exporter
+#   hosts:
+#     - all
+#   become: true
+#   gather_facts: yes
+#   roles:
+#     - node-exporter
 
 # - name: install node-exporter for mongo specify metrics
 #   hosts: mongodb

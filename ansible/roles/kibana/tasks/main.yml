@@ -140,4 +140,18 @@
     tags:
       - health check
 
+  - name: KIBANA | prepare template for create index-pattern
+    template:
+      backup: true
+      owner: root
+      group: root
+      mode: '0744'
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+    with_items:
+      - { src: files/curl_create_index.sh.j2, dest: /opt/curl_create_index.sh }
+
+- name: KIBANA |  Create index pattern
+  command: bash /opt/curl_create_index.sh
+
   when: ansible_facts['distribution'] == 'CentOS'
