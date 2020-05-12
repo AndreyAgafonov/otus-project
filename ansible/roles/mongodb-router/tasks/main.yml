@@ -20,6 +20,7 @@
   vars:
     packages:
     - mongodb-org-mongos-{{ mongodb_version }}
+  when: (inventory_hostname in mongodb_router)
 
 - name: MONGODB-ROUTER|Mongos base config
   template:

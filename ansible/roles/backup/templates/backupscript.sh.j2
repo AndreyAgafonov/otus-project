@@ -9,9 +9,9 @@ mongodb_authdb=admin
 mongodb_backup_db="{{ cer_db }}"
 
 #понеслась
+mkdir $backup_folder_name
 echo $(date), "Запущено резервное копирование" >> $backup_folder_name/mongobackup.log
 echo $backup_folder_name  >> $backup_folder_name/mongobackup.log
-mkdir $backup_folder_name
 mongodump --gzip --port $mongodb_port --host $mongodb_host --username $mongodb_user --password $mongodb_pass --authenticationDatabase $mongodb_authdb --db $mongodb_backup_db --out $backup_folder_name  >> $backup_folder_name/mongobackup.log
 if [[ $? == 0 ]]
   then
